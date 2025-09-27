@@ -36,34 +36,34 @@ export default function HomePage() {
     const today = new Date();
     const calendarDates = [];
     
-    // Get the first day of current month
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    // Start from tomorrow
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() + 1);
     
-    // Get the last day of current month
-    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    // End date is 30 days from tomorrow
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + 31); // +1 to include the 30th day
     
-    // Get the first day of next month
-    const firstDayOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-    
-    // Get the start of the calendar grid (Monday of the week containing the 1st)
-    const startOfCalendar = new Date(firstDayOfMonth);
-    const dayOfWeek = firstDayOfMonth.getDay();
+    // Get the start of the calendar grid (Monday of the week containing tomorrow)
+    const startOfCalendar = new Date(startDate);
+    const dayOfWeek = startDate.getDay();
     const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    startOfCalendar.setDate(firstDayOfMonth.getDate() - daysToMonday);
+    startOfCalendar.setDate(startDate.getDate() - daysToMonday);
     
-    // Get the end of the calendar grid (Sunday of the week containing the last day)
-    const endOfCalendar = new Date(lastDayOfMonth);
-    const lastDayOfWeek = lastDayOfMonth.getDay();
+    // Get the end of the calendar grid (Sunday of the week containing the last available day)
+    const endOfCalendar = new Date(endDate);
+    const lastDayOfWeek = endDate.getDay();
     const daysToSunday = lastDayOfWeek === 0 ? 0 : 7 - lastDayOfWeek;
-    endOfCalendar.setDate(lastDayOfMonth.getDate() + daysToSunday);
+    endOfCalendar.setDate(endDate.getDate() + daysToSunday);
     
     // Generate all days in the calendar grid
     const currentDate = new Date(startOfCalendar);
     while (currentDate <= endOfCalendar) {
       const dateStr = currentDate.toISOString().split('T')[0];
-      const isCurrentMonth = currentDate.getMonth() === today.getMonth();
+      const isInRange = currentDate >= startDate && currentDate < endDate;
       const isPast = currentDate < today;
-      const isAvailable = isCurrentMonth && !isPast && currentDate.getDate() !== today.getDate();
+      const isToday = currentDate.toDateString() === today.toDateString();
+      const isAvailable = isInRange && !isPast && !isToday;
       
       calendarDates.push({
         date: dateStr,
@@ -71,8 +71,9 @@ export default function HomePage() {
         dayName: currentDate.toLocaleDateString('uk-UA', { weekday: 'short' }),
         dayNumber: currentDate.getDate(),
         month: currentDate.toLocaleDateString('uk-UA', { month: 'short' }),
-        isCurrentMonth,
+        isInRange,
         isPast,
+        isToday,
         isAvailable
       });
       
@@ -260,8 +261,14 @@ export default function HomePage() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-white/80 text-sm">Дата:</p>
-                <h4 className="text-white font-semibold">
-                  {new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' })}
+                <h4 className="text-white font-semibold text-sm">
+                  {(() => {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const lastDay = new Date();
+                    lastDay.setDate(tomorrow.getDate() + 29);
+                    return `${tomorrow.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' })} - ${lastDay.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+                  })()}
                 </h4>
               </div>
               
@@ -284,22 +291,24 @@ export default function HomePage() {
                     className={`p-2 rounded-lg border transition-colors text-center min-h-[48px] flex flex-col items-center justify-center ${
                       selectedDate === dateInfo.date
                         ? 'bg-white text-purple-700 border-white'
-                        : !dateInfo.isCurrentMonth
+                        : !dateInfo.isInRange
                         ? 'bg-gray-700/20 border-gray-700/30 text-gray-500 cursor-not-allowed'
                         : dateInfo.isPast
                         ? 'bg-gray-500/20 border-gray-500/30 text-gray-400 cursor-not-allowed'
+                        : dateInfo.isToday
+                        ? 'bg-gray-600/20 border-gray-600/30 text-gray-500 cursor-not-allowed'
                         : dateInfo.isAvailable
                         ? 'bg-white/10 border-white/20 text-white hover:bg-white/15'
                         : 'bg-gray-600/20 border-gray-600/30 text-gray-500 cursor-not-allowed'
                     }`}
                   >
-                    <div className={`text-xs font-medium ${!dateInfo.isCurrentMonth ? 'opacity-50' : ''}`}>
+                    <div className={`text-xs font-medium ${!dateInfo.isInRange ? 'opacity-50' : ''}`}>
                       {dateInfo.dayNumber}
                     </div>
-                    {dateInfo.isPast && dateInfo.isCurrentMonth && (
+                    {dateInfo.isPast && dateInfo.isInRange && (
                       <div className="text-[10px] opacity-60">Минуло</div>
                     )}
-                    {!dateInfo.isPast && !dateInfo.isAvailable && dateInfo.isCurrentMonth && (
+                    {dateInfo.isToday && dateInfo.isInRange && (
                       <div className="text-[10px] opacity-60">Сьогодні</div>
                     )}
                   </button>
@@ -322,7 +331,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 bg-gray-700/20 rounded border border-gray-700/30"></div>
-                  <span>Інший місяць</span>
+                  <span>Поза діапазоном</span>
                 </div>
               </div>
             </div>
