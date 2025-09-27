@@ -1,33 +1,68 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState<'CLIENT' | 'MASTER'>('CLIENT');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const router = useRouter();
+  const { login, register, isLoading } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Простая логика для демонстрации
-    if (isLogin) {
-      router.push('/');
-    } else {
-      alert('Реєстрація успішна! Тепер ви можете увійти.');
-      setIsLogin(true);
+    setError('');
+    setSuccess('');
+    
+    if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
+      setError('Будь ласка, заповніть всі поля');
+      return;
+    }
+
+    try {
+      if (isLogin) {
+        const success = await login(formData.email, formData.password, userType);
+        if (success) {
+          setSuccess('Успішний вхід!');
+          setTimeout(() => router.push('/'), 1000);
+        } else {
+          setError('Невірний email, пароль або тип користувача');
+        }
+      } else {
+        const success = await register(formData.name, formData.email, formData.password, userType);
+        if (success) {
+          setSuccess('Реєстрація успішна! Ви увійшли в систему.');
+          setTimeout(() => router.push('/'), 1000);
+        } else {
+          setError('Користувач з таким email вже існує');
+        }
+      }
+    } catch {
+      setError('Сталася помилка. Спробуйте ще раз.');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-pink-500 to-pink-600 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-pink-600 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-4">
-            <span className="text-3xl">✨</span>
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-[#FF6B6B] rounded-3xl mb-4 shadow-2xl">
+            <svg className="w-12 h-12 text-white" viewBox="0 0 100 100" fill="currentColor">
+              <path d="M50 10L61.8 38.2L90 50L61.8 61.8L50 90L38.2 61.8L10 50L38.2 38.2L50 10Z" />
+            </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Glowly</h1>
-          <p className="text-white/80">
+          <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-yellow-400 to-pink-400 bg-clip-text text-transparent">
+            Glowly
+          </h1>
+          <p className="text-white/90 font-medium">
             {isLogin ? 'Увійдіть в свій акаунт' : 'Створіть новий акаунт'}
           </p>
         </div>
@@ -39,7 +74,7 @@ export default function AuthPage() {
             <button
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-2 px-4 rounded-lg transition-colors ${
-                isLogin ? 'bg-white text-pink-600' : 'text-white/80'
+                isLogin ? 'bg-white text-purple-700' : 'text-white/80'
               }`}
             >
               Увійти
@@ -47,7 +82,7 @@ export default function AuthPage() {
             <button
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-2 px-4 rounded-lg transition-colors ${
-                !isLogin ? 'bg-white text-pink-600' : 'text-white/80'
+                !isLogin ? 'bg-white text-purple-700' : 'text-white/80'
               }`}
             >
               Реєстрація
@@ -85,13 +120,37 @@ export default function AuthPage() {
             </div>
           </div>
 
+          {/* Error/Success messages */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 p-3 bg-green-500/20 border border-green-500/30 rounded-xl text-green-200 text-sm">
+              {success}
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Ім'я"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
+                />
+              </div>
+            )}
             <div>
               <input
                 type="email"
                 placeholder="Email"
-                required
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
               />
             </div>
@@ -99,25 +158,17 @@ export default function AuthPage() {
               <input
                 type="password"
                 placeholder="Пароль"
-                required
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
               />
             </div>
-            {!isLogin && (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Ім'я"
-                  required
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
-                />
-              </div>
-            )}
             <button
               type="submit"
-              className="w-full py-3 bg-white text-pink-600 font-semibold rounded-xl hover:bg-white/90 transition-colors"
+              disabled={isLoading}
+              className="w-full py-3 bg-white text-purple-700 font-semibold rounded-xl hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLogin ? 'Увійти' : 'Зареєструватися'}
+              {isLoading ? 'Завантаження...' : (isLogin ? 'Увійти' : 'Зареєструватися')}
             </button>
           </form>
 
@@ -154,3 +205,4 @@ export default function AuthPage() {
     </div>
   );
 }
+

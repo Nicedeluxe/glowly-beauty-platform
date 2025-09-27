@@ -16,8 +16,10 @@ export default {
       },
       fontFamily: {
         'sofia': ['Sofia Pro', 'Inter', 'sans-serif'],
+        'sans': ['Sofia Pro', 'Inter', 'sans-serif'],
       },
     },
   },
   plugins: [],
 } satisfies Config;
+
