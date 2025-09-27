@@ -70,7 +70,7 @@ export default function Avatar({ user, size = 'md', className = '', editable = f
     }
   };
 
-  const imageSrc = localImage || user.avatar;
+  const imageSrc = localImage || (user.avatar && user.avatar.trim() !== '' ? user.avatar : null);
 
   if (editable) {
     return (
