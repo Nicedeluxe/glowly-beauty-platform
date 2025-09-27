@@ -15,11 +15,12 @@ interface Appointment {
   status: 'upcoming' | 'completed' | 'cancelled';
   price: number;
   phone?: string;
+  masterPhone?: string;
 }
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const { getBookingsByClient } = useBooking();
+  const { getBookingsByClient, rescheduleBooking, refundBooking } = useBooking();
   const [activeTab, setActiveTab] = useState<'profile' | 'appointments'>('profile');
   const [profile, setProfile] = useState({
     firstName: '',
@@ -28,6 +29,10 @@ export default function Dashboard() {
     birthDate: ''
   });
   const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [newDate, setNewDate] = useState<string>('');
+  const [newTime, setNewTime] = useState<string>('');
   // Get appointments from booking context
   const bookings = getBookingsByClient(user?.id || '');
   const appointments: Appointment[] = bookings.map(booking => ({
@@ -36,8 +41,9 @@ export default function Dashboard() {
     service: booking.services.join(', '),
     date: booking.date,
     time: booking.time,
-    status: booking.status === 'confirmed' ? 'upcoming' : 'completed',
-    price: booking.totalPrice
+    status: booking.status === 'confirmed' ? 'upcoming' : booking.status === 'cancelled' ? 'cancelled' : 'completed',
+    price: booking.totalPrice,
+    masterPhone: booking.masterPhone
   }));
 
   useEffect(() => {
@@ -61,6 +67,38 @@ export default function Dashboard() {
     // In real app, you would upload the file to a server here
     console.log('New profile image:', file.name);
   };
+
+  const handleCancelAppointment = (appointmentId: string) => {
+    if (confirm('Ви впевнені, що хочете скасувати запис? Гроші будуть повернуті на ваш рахунок.')) {
+      refundBooking(appointmentId);
+      alert('Запис скасовано! Гроші повернуться на ваш рахунок протягом 3-5 робочих днів.');
+    }
+  };
+
+  const handleRescheduleAppointment = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setNewDate(appointment.date);
+    setNewTime(appointment.time);
+    setShowRescheduleModal(true);
+  };
+
+  const handleConfirmReschedule = () => {
+    if (selectedAppointment && newDate && newTime) {
+      rescheduleBooking(selectedAppointment.id, newDate, newTime);
+      alert('Запис успішно перенесено!');
+      setShowRescheduleModal(false);
+      setSelectedAppointment(null);
+    }
+  };
+
+  const handleCallMaster = (phone: string) => {
+    // In a real app, this would trigger a call
+    window.open(`tel:${phone}`, '_self');
+  };
+
+  const timeSlots = [
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
+  ];
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('uk-UA');
@@ -281,12 +319,37 @@ export default function Dashboard() {
                         </span>
                         
                         {appointment.status === 'upcoming' && (
-                          <button
-                            onClick={() => addToGoogleCalendar(appointment)}
-                            className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors text-sm"
-                          >
-                            📅 Додати в календар
-                          </button>
+                          <div className="flex flex-col space-y-2">
+                            <button
+                              onClick={() => addToGoogleCalendar(appointment)}
+                              className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors text-sm"
+                            >
+                              📅 Додати в календар
+                            </button>
+                            
+                            {appointment.masterPhone && (
+                              <button
+                                onClick={() => handleCallMaster(appointment.masterPhone!)}
+                                className="px-4 py-2 bg-green-500/20 text-green-300 rounded-lg hover:bg-green-500/30 transition-colors text-sm"
+                              >
+                                📞 Подзвонити майстру
+                              </button>
+                            )}
+                            
+                            <button
+                              onClick={() => handleRescheduleAppointment(appointment)}
+                              className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-colors text-sm"
+                            >
+                              📅 Перенести запис
+                            </button>
+                            
+                            <button
+                              onClick={() => handleCancelAppointment(appointment.id)}
+                              className="px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors text-sm"
+                            >
+                              ❌ Скасувати запис
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -297,6 +360,60 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Reschedule Modal */}
+      {showRescheduleModal && selectedAppointment && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 max-w-md w-full">
+            <h3 className="text-2xl font-bold text-white mb-6 text-center">Перенести запис</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-white/80 text-sm font-medium mb-2">Нова дата:</label>
+                <input
+                  type="date"
+                  value={newDate}
+                  onChange={(e) => setNewDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-white/80 text-sm font-medium mb-2">Новий час:</label>
+                <select
+                  value={newTime}
+                  onChange={(e) => setNewTime(e.target.value)}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                >
+                  <option value="">Оберіть час</option>
+                  {timeSlots.map((time) => (
+                    <option key={time} value={time} className="bg-gray-800">
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowRescheduleModal(false)}
+                className="flex-1 px-4 py-3 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-colors"
+              >
+                Скасувати
+              </button>
+              <button
+                onClick={handleConfirmReschedule}
+                disabled={!newDate || !newTime}
+                className="flex-1 px-4 py-3 bg-white text-purple-700 font-semibold rounded-xl hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Перенести
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

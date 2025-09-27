@@ -55,6 +55,8 @@ interface BookingContextType {
   addMasterService: (masterId: string, service: Omit<MasterService, 'id'>) => void;
   updateMasterService: (masterId: string, serviceId: string, service: Partial<MasterService>) => void;
   removeMasterService: (masterId: string, serviceId: string) => void;
+  rescheduleBooking: (bookingId: string, newDate: string, newTime: string) => void;
+  refundBooking: (bookingId: string) => void;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
@@ -139,7 +141,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
   const isTimeSlotAvailableGlobally = (date: string, time: string) => {
     // Check if there's at least one master available at this time slot
-    return MOCK_MASTERS.some(master => 
+    // Use the dynamic masters data instead of static MOCK_MASTERS
+    const mastersWithServices = getMastersWithDynamicServices();
+    return mastersWithServices.some(master => 
       !isTimeSlotBooked(master.id, date, time)
     );
   };
@@ -264,6 +268,23 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const rescheduleBooking = (bookingId: string, newDate: string, newTime: string) => {
+    setBookings(prev => prev.map(booking => 
+      booking.id === bookingId 
+        ? { ...booking, date: newDate, time: newTime }
+        : booking
+    ));
+  };
+
+  const refundBooking = (bookingId: string) => {
+    // In real app, this would integrate with payment system for refund
+    setBookings(prev => prev.map(booking => 
+      booking.id === bookingId 
+        ? { ...booking, status: 'cancelled' as const }
+        : booking
+    ));
+  };
+
   const value = {
     bookings,
     masterProfiles,
@@ -279,6 +300,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     addMasterService,
     updateMasterService,
     removeMasterService,
+    rescheduleBooking,
+    refundBooking,
   };
 
   return (
