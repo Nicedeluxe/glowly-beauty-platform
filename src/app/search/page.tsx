@@ -241,9 +241,18 @@ function SearchContent() {
   const handleBookAppointment = (master: typeof MOCK_MASTERS[0]) => {
     setSelectedMaster(master);
     setSelectedServices([]);
-    setSelectedDate('');
-    setSelectedTimeSlot('');
-    setBookingStep('services');
+    
+    // If date and time are already selected from search, use them
+    if (searchDate && searchTime) {
+      setSelectedDate(searchDate);
+      setSelectedTimeSlot(searchTime);
+      setBookingStep('services');
+    } else {
+      setSelectedDate('');
+      setSelectedTimeSlot('');
+      setBookingStep('services');
+    }
+    
     setShowBookingModal(true);
   };
 
@@ -257,7 +266,12 @@ function SearchContent() {
 
   const handleNextStep = () => {
     if (bookingStep === 'services' && selectedServices.length > 0) {
-      setBookingStep('datetime');
+      // If date and time are already selected from search, skip to payment
+      if (searchDate && searchTime && selectedDate && selectedTimeSlot) {
+        setBookingStep('payment');
+      } else {
+        setBookingStep('datetime');
+      }
     } else if (bookingStep === 'datetime' && selectedDate && selectedTimeSlot) {
       setBookingStep('payment');
     }
@@ -267,7 +281,12 @@ function SearchContent() {
     if (bookingStep === 'datetime') {
       setBookingStep('services');
     } else if (bookingStep === 'payment') {
-      setBookingStep('datetime');
+      // If date and time were pre-selected from search, go back to services
+      if (searchDate && searchTime) {
+        setBookingStep('services');
+      } else {
+        setBookingStep('datetime');
+      }
     }
   };
 
@@ -290,8 +309,16 @@ function SearchContent() {
     setShowBookingModal(false);
     setSelectedMaster(null);
     setSelectedServices([]);
-    setSelectedDate('');
-    setSelectedTimeSlot('');
+    
+    // Reset to search date/time if they exist, otherwise clear
+    if (searchDate && searchTime) {
+      setSelectedDate(searchDate);
+      setSelectedTimeSlot(searchTime);
+    } else {
+      setSelectedDate('');
+      setSelectedTimeSlot('');
+    }
+    
     setBookingStep('services');
   };
 
@@ -307,8 +334,8 @@ function SearchContent() {
                   <svg className="w-6 h-6 text-white" viewBox="0 0 100 100" fill="currentColor">
                     <path d="M50 10L61.8 38.2L90 50L61.8 61.8L50 90L38.2 61.8L10 50L38.2 38.2L50 10Z" />
                   </svg>
-                </div>
-                <h1 className="text-2xl font-bold text-white">Glowly</h1>
+              </div>
+              <h1 className="text-2xl font-bold text-white">Glowly</h1>
               </Link>
             </div>
             <button className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors">
@@ -474,6 +501,25 @@ function SearchContent() {
             {bookingStep === 'services' && (
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold text-white mb-4">Оберіть послуги:</h4>
+                
+                {/* Show pre-selected date and time if available */}
+                {searchDate && searchTime && (
+                  <div className="bg-white/10 rounded-xl p-4 mb-4">
+                    <div className="flex items-center gap-4 text-white/80 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span>📅</span>
+                        <span>{new Date(searchDate).toLocaleDateString('uk-UA')}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span>🕐</span>
+                        <span>{searchTime}</span>
+                      </div>
+                      <div className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded">
+                        Попередньо обрано
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="grid grid-cols-1 gap-3">
                   {selectedMaster.services.map((service, index) => (
                     <button
@@ -504,8 +550,8 @@ function SearchContent() {
               </div>
             )}
 
-            {/* Step 2: Date & Time Selection */}
-            {bookingStep === 'datetime' && (
+            {/* Step 2: Date & Time Selection - only show if not pre-selected from search */}
+            {bookingStep === 'datetime' && !searchDate && !searchTime && (
               <div className="space-y-6">
                 <h4 className="text-lg font-semibold text-white mb-4">Оберіть дату та час:</h4>
                 
