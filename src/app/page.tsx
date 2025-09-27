@@ -20,7 +20,7 @@ export default function HomePage() {
   ];
 
   // Mock data for booked slots (in real app this would come from API)
-  const bookedSlots = ['10:00', '14:00', '16:00']; // These slots are already taken
+  const bookedSlots: string[] = []; // No slots are booked for testing
 
 
   const getCalendarDates = () => {

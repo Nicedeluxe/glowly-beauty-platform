@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import Avatar from '../../components/Avatar';
 
-// New mock data for masters with proper categories
+// Extended mock data for masters with proper categories
 const MOCK_MASTERS = [
   {
     id: '1',
@@ -126,6 +126,186 @@ const MOCK_MASTERS = [
     phone: '+380 63 789 01 23',
     experience: '4 роки',
     description: 'Спеціалізуюся на апаратному педикюрі'
+  },
+  {
+    id: '9',
+    name: 'Ірина Манікюр',
+    specialization: 'Манікюр',
+    rating: 4.5,
+    reviews: 198,
+    price: '650 грн',
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+    services: ['Класичний манікюр', 'Гель-лак', 'Френч', 'Нейл-арт', 'Стрипінг'],
+    location: 'Київ, Троєщина',
+    address: 'вул. Милославська, 42, Київ, 02000',
+    phone: '+380 97 123 45 67',
+    experience: '3 роки',
+    description: 'Молода та талановита майстриня манікюру'
+  },
+  {
+    id: '10',
+    name: 'Оксана Брови',
+    specialization: 'Брови',
+    rating: 4.7,
+    reviews: 156,
+    price: '800 грн',
+    image: 'https://images.unsplash.com/photo-1594736797933-d0f7c2d0b9b8?w=150&h=150&fit=crop&crop=face',
+    services: ['Корекція бровей', 'Фарбування', 'Ламінування', 'Перманентний макіяж'],
+    location: 'Київ, Дарниця',
+    address: 'пр. Броварський, 15, Київ, 02000',
+    phone: '+380 63 234 56 78',
+    experience: '4 роки',
+    description: 'Спеціалізуюся на природній формі бровей'
+  },
+  {
+    id: '11',
+    name: 'Юлія Вії',
+    specialization: 'Вії',
+    rating: 4.8,
+    reviews: 234,
+    price: '1000 грн',
+    image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face',
+    services: ['Нарощування вій', 'Ламінування', 'Догляд', 'Фарбування', 'Керлінг'],
+    location: 'Київ, Виноградар',
+    address: 'вул. Виноградна, 8, Київ, 03000',
+    phone: '+380 50 345 67 89',
+    experience: '6 років',
+    description: 'Професійне нарощування вій різних технік'
+  },
+  {
+    id: '12',
+    name: 'Світлана Педикюр',
+    specialization: 'Педикюр',
+    rating: 4.6,
+    reviews: 189,
+    price: '750 грн',
+    image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150&h=150&fit=crop&crop=face',
+    services: ['Апаратний педикюр', 'Класичний педикюр', 'Парафінотерапія', 'Масаж ніг', 'Діагностика'],
+    location: 'Київ, Теремки',
+    address: 'вул. Академіка Заболотного, 37, Київ, 03100',
+    phone: '+380 67 456 78 90',
+    experience: '5 років',
+    description: 'Експерт з догляду за ногами та нігтями'
+  },
+  {
+    id: '13',
+    name: 'Тетяна Манікюр',
+    specialization: 'Манікюр',
+    rating: 4.9,
+    reviews: 267,
+    price: '850 грн',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    services: ['Гель-лак', 'Нарощування нігтів', 'Дізайн нігтів', 'Френч', 'Омбре'],
+    location: 'Київ, Лівобережна',
+    address: 'вул. Лівобережна, 25, Київ, 02000',
+    phone: '+380 44 567 89 01',
+    experience: '8 років',
+    description: 'Креативний дизайн нігтів та професійний манікюр'
+  },
+  {
+    id: '14',
+    name: 'Надія Брови',
+    specialization: 'Брови',
+    rating: 4.7,
+    reviews: 145,
+    price: '750 грн',
+    image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+    services: ['Корекція бровей', 'Фарбування', 'Ламінування', 'Консультації', 'Підбір форми'],
+    location: 'Київ, Нивки',
+    address: 'вул. Нивська, 12, Київ, 03000',
+    phone: '+380 63 678 90 12',
+    experience: '3 роки',
+    description: 'Молодий талановитий майстер з бровей'
+  },
+  {
+    id: '15',
+    name: 'Аліна Вії',
+    specialization: 'Вії',
+    rating: 4.8,
+    reviews: 178,
+    price: '950 грн',
+    image: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=150&h=150&fit=crop&crop=face',
+    services: ['Нарощування вій', 'Ламінування', 'Догляд', 'Фарбування', 'Ліфтинг'],
+    location: 'Київ, Святошино',
+    address: 'вул. Святошинська, 45, Київ, 03000',
+    phone: '+380 50 789 01 23',
+    experience: '4 роки',
+    description: 'Професійне нарощування та догляд за віями'
+  },
+  {
+    id: '16',
+    name: 'Валерія Педикюр',
+    specialization: 'Педикюр',
+    rating: 4.5,
+    reviews: 123,
+    price: '650 грн',
+    image: 'https://images.unsplash.com/photo-1594736797933-d0f7c2d0b9b8?w=150&h=150&fit=crop&crop=face',
+    services: ['Класичний педикюр', 'Апаратний педикюр', 'Парафінотерапія', 'Масаж ніг'],
+    location: 'Київ, Борщагівка',
+    address: 'вул. Борщагівська, 78, Київ, 03000',
+    phone: '+380 97 890 12 34',
+    experience: '2 роки',
+    description: 'Молода майстриня педикюру з сучасними технологіями'
+  },
+  {
+    id: '17',
+    name: 'Діана Манікюр',
+    specialization: 'Манікюр',
+    rating: 4.8,
+    reviews: 201,
+    price: '780 грн',
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+    services: ['Гель-лак', 'Нарощування нігтів', 'Дізайн нігтів', 'Френч', 'Нейл-арт'],
+    location: 'Київ, Троєщина',
+    address: 'вул. Милославська, 95, Київ, 02000',
+    phone: '+380 63 901 23 45',
+    experience: '6 років',
+    description: 'Художниця нігтів з унікальним стилем'
+  },
+  {
+    id: '18',
+    name: 'Катерина Брови',
+    specialization: 'Брови',
+    rating: 4.9,
+    reviews: 289,
+    price: '900 грн',
+    image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face',
+    services: ['Корекція бровей', 'Фарбування', 'Ламінування', 'Перманентний макіяж', 'Мікроблейдинг'],
+    location: 'Київ, Дарниця',
+    address: 'пр. Броварський, 67, Київ, 02000',
+    phone: '+380 50 012 34 56',
+    experience: '7 років',
+    description: 'Експерт з перманентного макіяжу бровей'
+  },
+  {
+    id: '19',
+    name: 'Маргарита Вії',
+    specialization: 'Вії',
+    rating: 4.7,
+    reviews: 156,
+    price: '1100 грн',
+    image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150&h=150&fit=crop&crop=face',
+    services: ['Нарощування вій', 'Ламінування', 'Догляд', 'Фарбування', 'Керлінг', 'Ліфтинг'],
+    location: 'Київ, Виноградар',
+    address: 'вул. Виноградна, 42, Київ, 03000',
+    phone: '+380 67 123 45 67',
+    experience: '5 років',
+    description: 'Професійне нарощування вій різних об\'ємів'
+  },
+  {
+    id: '20',
+    name: 'Олена Педикюр',
+    specialization: 'Педикюр',
+    rating: 4.6,
+    reviews: 167,
+    price: '720 грн',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    services: ['Апаратний педикюр', 'Класичний педикюр', 'Парафінотерапія', 'Масаж ніг', 'Діагностика', 'Лікування'],
+    location: 'Київ, Теремки',
+    address: 'вул. Академіка Заболотного, 89, Київ, 03100',
+    phone: '+380 44 234 56 78',
+    experience: '6 років',
+    description: 'Спеціалізуюся на лікувальному педикюрі'
   }
 ];
 
@@ -243,7 +423,7 @@ function SearchContent() {
   ];
 
   // Mock data for booked slots (in real app this would come from API)
-  const bookedSlots = ['10:00', '14:00', '16:00']; // These slots are already taken
+  const bookedSlots: string[] = []; // No slots are booked for testing
 
 
   const getCalendarDates = () => {
