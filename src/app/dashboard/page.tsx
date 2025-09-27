@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
+import { useBooking } from '../../contexts/BookingContext';
 import Avatar from '../../components/Avatar';
 
 interface Appointment {
@@ -17,7 +18,8 @@ interface Appointment {
 }
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { getBookingsByClient } = useBooking();
   const [activeTab, setActiveTab] = useState<'profile' | 'appointments'>('profile');
   const [profile, setProfile] = useState({
     firstName: '',
@@ -26,26 +28,17 @@ export default function Dashboard() {
     birthDate: ''
   });
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [appointments] = useState<Appointment[]>([
-    {
-      id: '1',
-      masterName: 'Анна Петренко',
-      service: 'Манікюр + покриття гель-лаком',
-      date: '2024-10-05',
-      time: '14:00',
-      status: 'upcoming',
-      price: 400
-    },
-    {
-      id: '2',
-      masterName: 'Марія Іваненко',
-      service: 'Стрижка + укладка',
-      date: '2024-10-08',
-      time: '11:00',
-      status: 'upcoming',
-      price: 600
-    }
-  ]);
+  // Get appointments from booking context
+  const bookings = getBookingsByClient(user?.id || '');
+  const appointments: Appointment[] = bookings.map(booking => ({
+    id: booking.id,
+    masterName: booking.masterName,
+    service: booking.services.join(', '),
+    date: booking.date,
+    time: booking.time,
+    status: booking.status === 'confirmed' ? 'upcoming' : 'completed',
+    price: booking.totalPrice
+  }));
 
   useEffect(() => {
     if (user) {

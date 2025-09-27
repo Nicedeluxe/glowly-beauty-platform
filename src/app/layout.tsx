@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "../contexts/AuthContext";
+import { BookingProvider } from "../contexts/BookingContext";
 
 // Sofia Pro font
 const sofiaPro = {
@@ -52,7 +53,9 @@ export default function RootLayout({
         style={{ fontFamily: 'Sofia Pro, sans-serif' }}
       >
         <AuthProvider>
-          {children}
+          <BookingProvider>
+            {children}
+          </BookingProvider>
         </AuthProvider>
       </body>
     </html>

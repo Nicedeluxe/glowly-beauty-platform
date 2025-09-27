@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
+import { useBooking } from '../../contexts/BookingContext';
 import Avatar from '../../components/Avatar';
 
 interface Service {
@@ -32,6 +33,7 @@ interface WorkSchedule {
 
 export default function MasterDashboard() {
   const { user } = useAuth();
+  const { getBookingsByMaster, cancelBooking } = useBooking();
   const [activeTab, setActiveTab] = useState<'profile' | 'services' | 'schedule' | 'appointments'>('profile');
   const [masterProfile, setMasterProfile] = useState({
     name: '',
@@ -58,28 +60,18 @@ export default function MasterDashboard() {
     { day: 'Неділя', isWorking: false, startTime: '09:00', endTime: '18:00' }
   ]);
   
-  const [appointments, setAppointments] = useState<MasterAppointment[]>([
-    {
-      id: '1',
-      clientName: 'Анна Коваленко',
-      clientPhone: '+380 67 123 45 67',
-      service: 'Манікюр + покриття гель-лаком',
-      date: '2024-10-05',
-      time: '14:00',
-      status: 'upcoming',
-      price: 400
-    },
-    {
-      id: '2',
-      clientName: 'Марія Петренко',
-      clientPhone: '+380 67 234 56 78',
-      service: 'Педікюр',
-      date: '2024-10-06',
-      time: '11:00',
-      status: 'upcoming',
-      price: 350
-    }
-  ]);
+  // Get appointments from booking context
+  const bookings = getBookingsByMaster(user?.id || '');
+  const appointments: MasterAppointment[] = bookings.map(booking => ({
+    id: booking.id,
+    clientName: booking.clientName,
+    clientPhone: booking.masterPhone,
+    service: booking.services.join(', '),
+    date: booking.date,
+    time: booking.time,
+    status: booking.status === 'confirmed' ? 'upcoming' : 'completed',
+    price: booking.totalPrice
+  }));
 
   const addToGoogleCalendar = (appointment: MasterAppointment) => {
     const startDate = new Date(`${appointment.date}T${appointment.time}`);
@@ -106,11 +98,7 @@ export default function MasterDashboard() {
 
   const cancelAppointment = (appointmentId: string) => {
     if (confirm('Ви впевнені, що хочете скасувати запис? Клієнту буде повернуто гроші.')) {
-      setAppointments(appointments.map(apt => 
-        apt.id === appointmentId 
-          ? { ...apt, status: 'cancelled' as const }
-          : apt
-      ));
+      cancelBooking(appointmentId);
       alert('Запис скасовано. Гроші повернуто клієнту.');
     }
   };

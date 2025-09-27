@@ -1,8 +1,9 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
+import { useBooking } from '../../contexts/BookingContext';
 import Avatar from '../../components/Avatar';
 
 // Extended mock data for masters with proper categories
@@ -312,6 +313,7 @@ const MOCK_MASTERS = [
 function SearchContent() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
+  const { isTimeSlotBooked, addBooking } = useBooking();
   const query = searchParams.get('q') || '';
   const searchDate = searchParams.get('date') || '';
   const searchTime = searchParams.get('time') || '';
@@ -325,7 +327,14 @@ function SearchContent() {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [bookingStep, setBookingStep] = useState<'services' | 'datetime' | 'payment'>('services');
-  const [bookedAppointments, setBookedAppointments] = useState<{[key: string]: string[]}>({});
+
+  // Mock data for time slots
+  const timeSlots = [
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
+  ];
+
+  // Mock data for booked slots (in real app this would come from API)
+  const bookedSlots: string[] = useMemo(() => [], []); // No slots are booked for testing
 
   // Calculate distance between two coordinates
   const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
@@ -433,9 +442,8 @@ function SearchContent() {
       // Filter by available time slots if date and time are specified
       if (searchDate && searchTime) {
         filtered = filtered.filter((master) => {
-          const masterKey = `${master.id}-${searchDate}`;
-          // Check if this time slot is already booked for this master
-          const isBooked = bookedSlots.includes(searchTime) || bookedAppointments[masterKey]?.includes(searchTime);
+          // Check if this time slot is already booked for this master using booking context
+          const isBooked = bookedSlots.includes(searchTime) || isTimeSlotBooked(master.id, searchDate, searchTime);
           return !isBooked;
         });
       }
@@ -457,8 +465,7 @@ function SearchContent() {
       let allMasters = MOCK_MASTERS;
       if (searchDate && searchTime) {
         allMasters = allMasters.filter((master) => {
-          const masterKey = `${master.id}-${searchDate}`;
-          const isBooked = bookedSlots.includes(searchTime) || bookedAppointments[masterKey]?.includes(searchTime);
+          const isBooked = bookedSlots.includes(searchTime) || isTimeSlotBooked(master.id, searchDate, searchTime);
           return !isBooked;
         });
       }
@@ -476,15 +483,7 @@ function SearchContent() {
       
       setFilteredMasters(allMasters);
     }
-  }, [query, searchDate, searchTime, userLat, userLng, bookedAppointments, bookedSlots]);
-
-  // Mock data for time slots
-  const timeSlots = [
-    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
-  ];
-
-  // Mock data for booked slots (in real app this would come from API)
-  const bookedSlots: string[] = []; // No slots are booked for testing
+  }, [query, searchDate, searchTime, userLat, userLng, bookedSlots, isTimeSlotBooked]);
 
 
   const getCalendarDates = () => {
@@ -591,11 +590,9 @@ function SearchContent() {
   };
 
   const handleConfirmBooking = () => {
-    if (selectedMaster && selectedServices.length > 0 && selectedDate && selectedTimeSlot) {
+    if (selectedMaster && selectedServices.length > 0 && selectedDate && selectedTimeSlot && user) {
       // Check if slot is already booked
-      const masterKey = `${selectedMaster.id}-${selectedDate}`;
-      
-      if (bookedAppointments[masterKey]?.includes(selectedTimeSlot)) {
+      if (isTimeSlotBooked(selectedMaster.id, selectedDate, selectedTimeSlot)) {
         alert('Цей час вже заброньований! Оберіть інший час.');
         return;
       }
@@ -603,11 +600,20 @@ function SearchContent() {
       // Calculate total price
       const totalPrice = selectedServices.length * 200; // Mock pricing
       
-      // Block the time slot
-      setBookedAppointments(prev => ({
-        ...prev,
-        [masterKey]: [...(prev[masterKey] || []), selectedTimeSlot]
-      }));
+      // Add booking to context
+      addBooking({
+        masterId: selectedMaster.id,
+        masterName: selectedMaster.name,
+        masterSpecialization: selectedMaster.specialization,
+        masterAddress: selectedMaster.address,
+        masterPhone: selectedMaster.phone,
+        clientId: user.id,
+        clientName: user.name,
+        date: selectedDate,
+        time: selectedTimeSlot,
+        services: selectedServices,
+        totalPrice: totalPrice,
+      });
       
       alert(`Запис підтверджено! Ви записані до ${selectedMaster.name} на ${selectedDate} о ${selectedTimeSlot}. Вартість: ${totalPrice} грн.`);
       setShowBookingModal(false);
@@ -967,8 +973,7 @@ function SearchContent() {
                     <p className="text-white/80 text-sm mb-3">Час:</p>
                     <div className="grid grid-cols-3 gap-2">
                       {timeSlots.map((time) => {
-                        const masterKey = `${selectedMaster.id}-${selectedDate}`;
-                        const isBooked = bookedSlots.includes(time) || bookedAppointments[masterKey]?.includes(time);
+                        const isBooked = bookedSlots.includes(time) || isTimeSlotBooked(selectedMaster.id, selectedDate, time);
                         const isSelected = selectedTimeSlot === time;
                         
                         return (
