@@ -325,6 +325,7 @@ function SearchContent() {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [bookingStep, setBookingStep] = useState<'services' | 'datetime' | 'payment'>('services');
+  const [bookedAppointments, setBookedAppointments] = useState<{[key: string]: string[]}>({});
 
   // Calculate distance between two coordinates
   const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
@@ -341,14 +342,53 @@ function SearchContent() {
   // Mock coordinates for masters (in real app this would come from database)
   const getMasterCoordinates = (master: typeof MOCK_MASTERS[0]) => {
     const coordinates: { [key: string]: { lat: number, lng: number } } = {
-      'Анна Красива': { lat: 50.4501, lng: 30.5234 }, // Київ, центр
-      'Марія Брові': { lat: 50.4644, lng: 30.5191 }, // Київ, Поділ
-      'Олена Вії': { lat: 50.4274, lng: 30.5381 }, // Київ, Печерськ
-      'Катерина Педикюр': { lat: 50.4422, lng: 30.5167 }, // Київ, Шевченківський
-      'Вікторія Манікюр': { lat: 50.4656, lng: 30.5156 }, // Київ, Солом'янський
-      'Софія Брови': { lat: 50.5167, lng: 30.4833 }, // Київ, Оболонь
-      'Тетяна Вії': { lat: 50.4489, lng: 30.5256 }, // Київ, центр
-      'Наталія Педикюр': { lat: 50.4611, lng: 30.5222 }, // Київ, Поділ
+      // Центр Києва
+      'Анна Красива': { lat: 50.4501, lng: 30.5234 }, // Хрещатик
+      'Тетяна Вії': { lat: 50.4489, lng: 30.5256 }, // Велика Васильківська
+      
+      // Поділ
+      'Марія Брові': { lat: 50.4644, lng: 30.5191 }, // Андріївський узвіз
+      'Наталія Педикюр': { lat: 50.4611, lng: 30.5222 }, // Контрактова площа
+      
+      // Печерськ
+      'Олена Вії': { lat: 50.4274, lng: 30.5381 }, // Печерський узвіз
+      
+      // Шевченківський
+      'Катерина Педикюр': { lat: 50.4422, lng: 30.5167 }, // Тараса Шевченка
+      
+      // Солом'янський
+      'Вікторія Манікюр': { lat: 50.4656, lng: 30.5156 }, // Солом'янська
+      
+      // Оболонь
+      'Софія Брови': { lat: 50.5167, lng: 30.4833 }, // Героїв Сталінграду
+      
+      // Троєщина
+      'Ірина Манікюр': { lat: 50.5089, lng: 30.6023 }, // Милославська, 42
+      'Діана Манікюр': { lat: 50.5098, lng: 30.6015 }, // Милославська, 95
+      
+      // Дарниця
+      'Оксана Брови': { lat: 50.4589, lng: 30.6189 }, // Броварський, 15
+      'Катерина Брови': { lat: 50.4595, lng: 30.6175 }, // Броварський, 67
+      
+      // Виноградар
+      'Юлія Вії': { lat: 50.4876, lng: 30.4567 }, // Виноградна, 8
+      'Маргарита Вії': { lat: 50.4882, lng: 30.4578 }, // Виноградна, 42
+      
+      // Теремки
+      'Світлана Педикюр': { lat: 50.3456, lng: 30.5234 }, // Академіка Заболотного, 37
+      'Олена Педикюр': { lat: 50.3467, lng: 30.5245 }, // Академіка Заболотного, 89
+      
+      // Лівобережна
+      'Тетяна Манікюр': { lat: 50.4567, lng: 30.6789 }, // Лівобережна, 25
+      
+      // Нивки
+      'Надія Брови': { lat: 50.4567, lng: 30.4567 }, // Нивська, 12
+      
+      // Святошино
+      'Аліна Вії': { lat: 50.4567, lng: 30.3456 }, // Святошинська, 45
+      
+      // Борщагівка
+      'Валерія Педикюр': { lat: 50.3456, lng: 30.4567 }, // Борщагівська, 78
     };
     return coordinates[master.name] || { lat: 50.4501, lng: 30.5234 };
   };
@@ -531,8 +571,22 @@ function SearchContent() {
 
   const handleConfirmBooking = () => {
     if (selectedMaster && selectedServices.length > 0 && selectedDate && selectedTimeSlot) {
+      // Check if slot is already booked
+      const masterKey = `${selectedMaster.id}-${selectedDate}`;
+      
+      if (bookedAppointments[masterKey]?.includes(selectedTimeSlot)) {
+        alert('Цей час вже заброньований! Оберіть інший час.');
+        return;
+      }
+      
       // Calculate total price
       const totalPrice = selectedServices.length * 200; // Mock pricing
+      
+      // Block the time slot
+      setBookedAppointments(prev => ({
+        ...prev,
+        [masterKey]: [...(prev[masterKey] || []), selectedTimeSlot]
+      }));
       
       alert(`Запис підтверджено! Ви записані до ${selectedMaster.name} на ${selectedDate} о ${selectedTimeSlot}. Вартість: ${totalPrice} грн.`);
       setShowBookingModal(false);
@@ -892,7 +946,8 @@ function SearchContent() {
                     <p className="text-white/80 text-sm mb-3">Час:</p>
                     <div className="grid grid-cols-3 gap-2">
                       {timeSlots.map((time) => {
-                        const isBooked = bookedSlots.includes(time);
+                        const masterKey = `${selectedMaster.id}-${selectedDate}`;
+                        const isBooked = bookedSlots.includes(time) || bookedAppointments[masterKey]?.includes(time);
                         const isSelected = selectedTimeSlot === time;
                         
                         return (
