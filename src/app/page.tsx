@@ -36,30 +36,47 @@ export default function HomePage() {
     const today = new Date();
     const calendarDates = [];
     
-    // Get the start of the current week (Monday)
-    const startOfWeek = new Date(today);
-    const dayOfWeek = today.getDay();
-    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    startOfWeek.setDate(today.getDate() - daysToMonday);
+    // Get the first day of current month
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     
-    // Generate 14 days starting from Monday of current week
-    for (let i = 0; i < 14; i++) {
-      const date = new Date(startOfWeek);
-      date.setDate(startOfWeek.getDate() + i);
-      
-      const dateStr = date.toISOString().split('T')[0];
-      const isPast = date < today;
-      const isAvailable = !isPast && i >= 1; // Available from tomorrow
+    // Get the last day of current month
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    // Get the first day of next month
+    const firstDayOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+    
+    // Get the start of the calendar grid (Monday of the week containing the 1st)
+    const startOfCalendar = new Date(firstDayOfMonth);
+    const dayOfWeek = firstDayOfMonth.getDay();
+    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    startOfCalendar.setDate(firstDayOfMonth.getDate() - daysToMonday);
+    
+    // Get the end of the calendar grid (Sunday of the week containing the last day)
+    const endOfCalendar = new Date(lastDayOfMonth);
+    const lastDayOfWeek = lastDayOfMonth.getDay();
+    const daysToSunday = lastDayOfWeek === 0 ? 0 : 7 - lastDayOfWeek;
+    endOfCalendar.setDate(lastDayOfMonth.getDate() + daysToSunday);
+    
+    // Generate all days in the calendar grid
+    const currentDate = new Date(startOfCalendar);
+    while (currentDate <= endOfCalendar) {
+      const dateStr = currentDate.toISOString().split('T')[0];
+      const isCurrentMonth = currentDate.getMonth() === today.getMonth();
+      const isPast = currentDate < today;
+      const isAvailable = isCurrentMonth && !isPast && currentDate.getDate() !== today.getDate();
       
       calendarDates.push({
         date: dateStr,
-        dateObj: date,
-        dayName: date.toLocaleDateString('uk-UA', { weekday: 'short' }),
-        dayNumber: date.getDate(),
-        month: date.toLocaleDateString('uk-UA', { month: 'short' }),
+        dateObj: new Date(currentDate),
+        dayName: currentDate.toLocaleDateString('uk-UA', { weekday: 'short' }),
+        dayNumber: currentDate.getDate(),
+        month: currentDate.toLocaleDateString('uk-UA', { month: 'short' }),
+        isCurrentMonth,
         isPast,
         isAvailable
       });
+      
+      currentDate.setDate(currentDate.getDate() + 1);
     }
     
     return calendarDates;
@@ -239,9 +256,14 @@ export default function HomePage() {
               <p className="text-white font-semibold text-lg">{searchQuery}</p>
             </div>
 
-            {/* Date Selection - Calendar Layout */}
+            {/* Date Selection - Monthly Calendar Layout */}
             <div className="mb-6">
-              <p className="text-white/80 text-sm mb-3">Дата:</p>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-white/80 text-sm">Дата:</p>
+                <h4 className="text-white font-semibold">
+                  {new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' })}
+                </h4>
+              </div>
               
               {/* Calendar Header */}
               <div className="grid grid-cols-7 gap-1 mb-2">
@@ -262,6 +284,8 @@ export default function HomePage() {
                     className={`p-2 rounded-lg border transition-colors text-center min-h-[48px] flex flex-col items-center justify-center ${
                       selectedDate === dateInfo.date
                         ? 'bg-white text-purple-700 border-white'
+                        : !dateInfo.isCurrentMonth
+                        ? 'bg-gray-700/20 border-gray-700/30 text-gray-500 cursor-not-allowed'
                         : dateInfo.isPast
                         ? 'bg-gray-500/20 border-gray-500/30 text-gray-400 cursor-not-allowed'
                         : dateInfo.isAvailable
@@ -269,11 +293,13 @@ export default function HomePage() {
                         : 'bg-gray-600/20 border-gray-600/30 text-gray-500 cursor-not-allowed'
                     }`}
                   >
-                    <div className="text-xs font-medium">{dateInfo.dayNumber}</div>
-                    {dateInfo.isPast && (
+                    <div className={`text-xs font-medium ${!dateInfo.isCurrentMonth ? 'opacity-50' : ''}`}>
+                      {dateInfo.dayNumber}
+                    </div>
+                    {dateInfo.isPast && dateInfo.isCurrentMonth && (
                       <div className="text-[10px] opacity-60">Минуло</div>
                     )}
-                    {!dateInfo.isPast && !dateInfo.isAvailable && (
+                    {!dateInfo.isPast && !dateInfo.isAvailable && dateInfo.isCurrentMonth && (
                       <div className="text-[10px] opacity-60">Сьогодні</div>
                     )}
                   </button>
@@ -281,7 +307,7 @@ export default function HomePage() {
               </div>
               
               {/* Legend */}
-              <div className="flex items-center justify-center gap-4 mt-3 text-xs text-white/60">
+              <div className="flex items-center justify-center gap-3 mt-3 text-xs text-white/60">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 bg-white/10 rounded border border-white/20"></div>
                   <span>Доступно</span>
@@ -293,6 +319,10 @@ export default function HomePage() {
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 bg-gray-500/20 rounded border border-gray-500/30"></div>
                   <span>Недоступно</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 bg-gray-700/20 rounded border border-gray-700/30"></div>
+                  <span>Інший місяць</span>
                 </div>
               </div>
             </div>
