@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
+import { useBooking } from '../contexts/BookingContext';
 import Avatar from '../components/Avatar';
 
 export default function HomePage() {
@@ -11,9 +12,9 @@ export default function HomePage() {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
-  const [bookedAppointments, setBookedAppointments] = useState<{[key: string]: string[]}>({});
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { isTimeSlotAvailableGlobally } = useBooking();
 
   // Mock data for time slots
   const timeSlots = [
@@ -324,7 +325,7 @@ export default function HomePage() {
                 <p className="text-white/80 text-sm mb-3">Час:</p>
                 <div className="grid grid-cols-3 gap-2">
                   {timeSlots.map((time) => {
-                    const isBooked = bookedSlots.includes(time);
+                    const isBooked = bookedSlots.includes(time) || !isTimeSlotAvailableGlobally(selectedDate, time);
                     const isSelected = selectedTimeSlot === time;
                     
                     return (

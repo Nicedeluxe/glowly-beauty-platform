@@ -2,6 +2,30 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+// Mock masters data - in real app this would come from API
+const MOCK_MASTERS = [
+  { id: '1', name: 'Анна Красива', specialization: 'Манікюр' },
+  { id: '2', name: 'Марія Брові', specialization: 'Брови' },
+  { id: '3', name: 'Олена Вії', specialization: 'Вії' },
+  { id: '4', name: 'Катерина Педикюр', specialization: 'Педикюр' },
+  { id: '5', name: 'Вікторія Манікюр', specialization: 'Манікюр' },
+  { id: '6', name: 'Софія Брови', specialization: 'Брови' },
+  { id: '7', name: 'Тетяна Вії', specialization: 'Вії' },
+  { id: '8', name: 'Наталія Педикюр', specialization: 'Педикюр' },
+  { id: '9', name: 'Ірина Манікюр', specialization: 'Манікюр' },
+  { id: '10', name: 'Оксана Брови', specialization: 'Брови' },
+  { id: '11', name: 'Юлія Вії', specialization: 'Вії' },
+  { id: '12', name: 'Світлана Педикюр', specialization: 'Педикюр' },
+  { id: '13', name: 'Тетяна Манікюр', specialization: 'Манікюр' },
+  { id: '14', name: 'Надія Брови', specialization: 'Брови' },
+  { id: '15', name: 'Аліна Вії', specialization: 'Вії' },
+  { id: '16', name: 'Валерія Педикюр', specialization: 'Педикюр' },
+  { id: '17', name: 'Діана Манікюр', specialization: 'Манікюр' },
+  { id: '18', name: 'Катерина Брови', specialization: 'Брови' },
+  { id: '19', name: 'Маргарита Вії', specialization: 'Вії' },
+  { id: '20', name: 'Олена Педикюр', specialization: 'Педикюр' },
+];
+
 export interface Booking {
   id: string;
   masterId: string;
@@ -43,6 +67,7 @@ interface BookingContextType {
   getBookingsByMaster: (masterId: string) => Booking[];
   getBookingsByClient: (clientId: string) => Booking[];
   isTimeSlotBooked: (masterId: string, date: string, time: string) => boolean;
+  isTimeSlotAvailableGlobally: (date: string, time: string) => boolean;
   getMasterProfile: (masterId: string) => MasterProfile | undefined;
   updateMasterProfile: (masterId: string, profile: Partial<MasterProfile>) => void;
   addMasterService: (masterId: string, service: Omit<MasterService, 'id'>) => void;
@@ -127,6 +152,13 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       booking.date === date && 
       booking.time === time && 
       booking.status === 'confirmed'
+    );
+  };
+
+  const isTimeSlotAvailableGlobally = (date: string, time: string) => {
+    // Check if there's at least one master available at this time slot
+    return MOCK_MASTERS.some(master => 
+      !isTimeSlotBooked(master.id, date, time)
     );
   };
 
@@ -229,6 +261,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     getBookingsByMaster,
     getBookingsByClient,
     isTimeSlotBooked,
+    isTimeSlotAvailableGlobally,
     getMasterProfile,
     updateMasterProfile,
     addMasterService,

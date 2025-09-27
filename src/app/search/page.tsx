@@ -313,7 +313,7 @@ const MOCK_MASTERS = [
 function SearchContent() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { isTimeSlotBooked, addBooking } = useBooking();
+  const { isTimeSlotBooked, isTimeSlotAvailableGlobally, addBooking } = useBooking();
   const query = searchParams.get('q') || '';
   const searchDate = searchParams.get('date') || '';
   const searchTime = searchParams.get('time') || '';
@@ -483,7 +483,7 @@ function SearchContent() {
       
       setFilteredMasters(allMasters);
     }
-  }, [query, searchDate, searchTime, userLat, userLng, bookedSlots, isTimeSlotBooked]);
+  }, [query, searchDate, searchTime, userLat, userLng, bookedSlots, isTimeSlotBooked, isTimeSlotAvailableGlobally]);
 
 
   const getCalendarDates = () => {
