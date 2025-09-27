@@ -225,44 +225,6 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Auth buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-          {user ? (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                {user.avatar && (
-                  <img 
-                    src={user.avatar} 
-                    alt={user.name}
-                    className="w-8 h-8 rounded-full"
-                  />
-                )}
-                <span className="text-white font-medium">Привіт, {user.name}!</span>
-              </div>
-              <button
-                onClick={logout}
-                className="px-6 py-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-medium rounded-xl hover:bg-white/30 transition-colors"
-              >
-                Вийти
-              </button>
-            </div>
-          ) : (
-            <>
-              <button
-                onClick={() => router.push('/auth')}
-                className="px-8 py-3 bg-white text-purple-700 font-semibold rounded-xl hover:bg-white/90 transition-colors shadow-lg"
-              >
-                Увійти
-              </button>
-              <button
-                onClick={() => router.push('/auth')}
-                className="px-8 py-3 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-semibold rounded-xl hover:bg-white/30 transition-colors"
-              >
-                Зареєструватися
-              </button>
-            </>
-          )}
-        </div>
       </div>
 
       {/* Date & Time Selection Modal */}
