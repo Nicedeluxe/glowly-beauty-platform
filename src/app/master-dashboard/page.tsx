@@ -40,6 +40,7 @@ export default function MasterDashboard() {
     photo: '',
     description: ''
   });
+  const [profileImage, setProfileImage] = useState<File | null>(null);
   
   const [services, setServices] = useState<Service[]>([
     { id: '1', name: 'Манікюр + покриття гель-лаком', price: 400, duration: 90 },
@@ -140,6 +141,12 @@ export default function MasterDashboard() {
     ));
   };
 
+  const handleImageChange = (file: File) => {
+    setProfileImage(file);
+    // In real app, you would upload the file to a server here
+    console.log('New profile image:', file.name);
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('uk-UA');
   };
@@ -208,10 +215,16 @@ export default function MasterDashboard() {
             {/* Profile Avatar */}
             {user && (
               <div className="flex items-center space-x-4 mb-8">
-                <Avatar user={user} size="lg" />
+                <Avatar 
+                  user={user} 
+                  size="lg" 
+                  editable={true} 
+                  onImageChange={handleImageChange}
+                />
                 <div>
                   <h3 className="text-xl font-semibold text-white">{user.name}</h3>
                   <p className="text-white/60">{user.email}</p>
+                  <p className="text-white/40 text-sm">Натисніть на фото для зміни</p>
                 </div>
               </div>
             )}
@@ -257,18 +270,6 @@ export default function MasterDashboard() {
                 </select>
               </div>
               
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">
-                  URL фото
-                </label>
-                <input
-                  type="url"
-                  value={masterProfile.photo}
-                  onChange={(e) => setMasterProfile({...masterProfile, photo: e.target.value})}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
-                  placeholder="https://example.com/photo.jpg"
-                />
-              </div>
             </div>
             
             <div className="mt-6">

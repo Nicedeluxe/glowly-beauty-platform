@@ -25,6 +25,7 @@ export default function Dashboard() {
     phone: '',
     birthDate: ''
   });
+  const [profileImage, setProfileImage] = useState<File | null>(null);
   const [appointments] = useState<Appointment[]>([
     {
       id: '1',
@@ -60,6 +61,12 @@ export default function Dashboard() {
   const handleProfileUpdate = () => {
     // In real app, this would save to backend
     alert('Профіль оновлено!');
+  };
+
+  const handleImageChange = (file: File) => {
+    setProfileImage(file);
+    // In real app, you would upload the file to a server here
+    console.log('New profile image:', file.name);
   };
 
   const formatDate = (dateString: string) => {
@@ -155,10 +162,16 @@ export default function Dashboard() {
             {/* Profile Avatar */}
             {user && (
               <div className="flex items-center space-x-4 mb-8">
-                <Avatar user={user} size="lg" />
+                <Avatar 
+                  user={user} 
+                  size="lg" 
+                  editable={true} 
+                  onImageChange={handleImageChange}
+                />
                 <div>
                   <h3 className="text-xl font-semibold text-white">{user.name}</h3>
                   <p className="text-white/60">{user.email}</p>
+                  <p className="text-white/40 text-sm">Натисніть на фото для зміни</p>
                 </div>
               </div>
             )}
