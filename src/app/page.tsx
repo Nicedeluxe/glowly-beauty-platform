@@ -145,6 +145,7 @@ export default function HomePage() {
             Glowly
           </h1>
           <p className="text-xl text-white/90 font-medium">Платформа для запису до майстрів краси</p>
+          {/* Auto-deploy test */}
         </div>
 
         {/* Search form */}
