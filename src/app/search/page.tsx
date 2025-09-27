@@ -432,11 +432,11 @@ function SearchContent() {
 
       // Filter by available time slots if date and time are specified
       if (searchDate && searchTime) {
-        // In real app, this would check actual availability from database
-        // For now, we'll simulate that some masters are available
-        filtered = filtered.filter((master, index) => {
-          // Simulate that some masters are available at the selected time
-          return index % 2 === 0 || index % 3 === 0;
+        filtered = filtered.filter((master) => {
+          const masterKey = `${master.id}-${searchDate}`;
+          // Check if this time slot is already booked for this master
+          const isBooked = bookedSlots.includes(searchTime) || bookedAppointments[masterKey]?.includes(searchTime);
+          return !isBooked;
         });
       }
 
@@ -453,9 +453,30 @@ function SearchContent() {
 
       setFilteredMasters(filtered);
     } else {
-      setFilteredMasters(MOCK_MASTERS);
+      // If no search query but date and time are specified, filter by availability
+      let allMasters = MOCK_MASTERS;
+      if (searchDate && searchTime) {
+        allMasters = allMasters.filter((master) => {
+          const masterKey = `${master.id}-${searchDate}`;
+          const isBooked = bookedSlots.includes(searchTime) || bookedAppointments[masterKey]?.includes(searchTime);
+          return !isBooked;
+        });
+      }
+      
+      // Sort by distance from user location
+      allMasters = allMasters.sort((a, b) => {
+        const coordsA = getMasterCoordinates(a);
+        const coordsB = getMasterCoordinates(b);
+        
+        const distanceA = calculateDistance(userLat, userLng, coordsA.lat, coordsA.lng);
+        const distanceB = calculateDistance(userLat, userLng, coordsB.lat, coordsB.lng);
+        
+        return distanceA - distanceB;
+      });
+      
+      setFilteredMasters(allMasters);
     }
-  }, [query, searchDate, searchTime, userLat, userLng]);
+  }, [query, searchDate, searchTime, userLat, userLng, bookedAppointments, bookedSlots]);
 
   // Mock data for time slots
   const timeSlots = [
@@ -644,7 +665,7 @@ function SearchContent() {
                 href="/auth"
                 className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
               >
-                Увійти
+              Увійти
               </Link>
             )}
           </div>

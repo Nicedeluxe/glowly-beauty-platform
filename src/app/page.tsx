@@ -11,6 +11,7 @@ export default function HomePage() {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [bookedAppointments, setBookedAppointments] = useState<{[key: string]: string[]}>({});
   const router = useRouter();
   const { user, logout } = useAuth();
 
