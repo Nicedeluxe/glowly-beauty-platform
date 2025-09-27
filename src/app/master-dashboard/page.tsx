@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useAuth } from '../../contexts/AuthContext';
+import Avatar from '../../components/Avatar';
 
 interface Service {
   id: string;
@@ -29,6 +31,7 @@ interface WorkSchedule {
 }
 
 export default function MasterDashboard() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'services' | 'schedule' | 'appointments'>('profile');
   const [masterProfile, setMasterProfile] = useState({
     name: '',
@@ -158,7 +161,10 @@ export default function MasterDashboard() {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-white">Кабінет майстра</span>
+              <div className="flex items-center space-x-3">
+                <Avatar user={user!} size="sm" />
+                <span className="text-white">Кабінет майстра</span>
+              </div>
               <Link 
                 href="/auth" 
                 className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
@@ -198,6 +204,15 @@ export default function MasterDashboard() {
         {activeTab === 'profile' && (
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-white mb-6">Профіль майстра</h2>
+            
+            {/* Profile Avatar */}
+            <div className="flex items-center space-x-4 mb-8">
+              <Avatar user={user!} size="lg" />
+              <div>
+                <h3 className="text-xl font-semibold text-white">{user?.name}</h3>
+                <p className="text-white/60">{user?.email}</p>
+              </div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>

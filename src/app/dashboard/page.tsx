@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
+import Avatar from '../../components/Avatar';
 
 interface Appointment {
   id: string;
@@ -104,7 +105,10 @@ export default function Dashboard() {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-white">Привіт, {user?.name}</span>
+              <div className="flex items-center space-x-3">
+                <Avatar user={user!} size="sm" />
+                <span className="text-white">Привіт, {user?.name}</span>
+              </div>
               <Link 
                 href="/auth" 
                 className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
@@ -146,6 +150,15 @@ export default function Dashboard() {
         {activeTab === 'profile' && (
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-white mb-6">Мій профіль</h2>
+            
+            {/* Profile Avatar */}
+            <div className="flex items-center space-x-4 mb-8">
+              <Avatar user={user!} size="lg" />
+              <div>
+                <h3 className="text-xl font-semibold text-white">{user?.name}</h3>
+                <p className="text-white/60">{user?.email}</p>
+              </div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>

@@ -102,6 +102,45 @@ export default function AuthPage() {
             </button>
           </div>
 
+          {/* Test Login Buttons */}
+          <div className="mb-6 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl">
+            <p className="text-yellow-200 text-sm mb-3 font-medium">🧪 Тестові кнопки для швидкого входу:</p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={async () => {
+                  setUserType('CLIENT');
+                  setIsLogin(true);
+                  setFormData({...formData, email: 'anna@example.com', password: 'password123'});
+                  // Simulate form submission
+                  const success = await login('anna@example.com', 'password123', 'CLIENT');
+                  if (success) {
+                    router.push('/dashboard');
+                  }
+                }}
+                className="flex-1 px-3 py-2 bg-white/20 text-white text-sm rounded-lg hover:bg-white/30 transition-colors"
+              >
+                👤 Клієнт (Анна)
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setUserType('MASTER');
+                  setIsLogin(true);
+                  setFormData({...formData, email: 'maria@example.com', password: 'password123'});
+                  // Simulate form submission
+                  const success = await login('maria@example.com', 'password123', 'MASTER');
+                  if (success) {
+                    router.push('/master-dashboard');
+                  }
+                }}
+                className="flex-1 px-3 py-2 bg-white/20 text-white text-sm rounded-lg hover:bg-white/30 transition-colors"
+              >
+                ✂️ Майстер (Марія)
+              </button>
+            </div>
+          </div>
+
           {/* User type selection */}
           <div className="mb-6">
             <p className="text-white/80 text-sm mb-3">Я:</p>

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
+import Avatar from '../components/Avatar';
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -212,9 +213,10 @@ export default function HomePage() {
             <div className="flex items-center space-x-4">
               <Link
                 href={user.type === 'MASTER' ? '/master-dashboard' : '/dashboard'}
-                className="text-white hover:text-white/80 transition-colors cursor-pointer"
+                className="flex items-center space-x-3 text-white hover:text-white/80 transition-colors cursor-pointer underline hover:no-underline text-lg font-medium"
               >
-                Привіт, {user.name}
+                <Avatar user={user} size="sm" />
+                <span>Привіт, {user.name}</span>
               </Link>
               <button 
                 onClick={logout}

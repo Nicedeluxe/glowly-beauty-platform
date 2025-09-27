@@ -3,6 +3,7 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
+import Avatar from '../../components/Avatar';
 
 // New mock data for masters with proper categories
 const MOCK_MASTERS = [
@@ -394,9 +395,10 @@ function SearchContent() {
             {user ? (
               <Link
                 href={user.type === 'MASTER' ? '/master-dashboard' : '/dashboard'}
-                className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
               >
-                {user.name}
+                <Avatar user={user} size="sm" />
+                <span>{user.name}</span>
               </Link>
             ) : (
               <Link
