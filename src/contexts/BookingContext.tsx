@@ -1,30 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-// Mock masters data - in real app this would come from API
-const MOCK_MASTERS = [
-  { id: '1', name: 'Анна Красива', specialization: 'Манікюр' },
-  { id: '2', name: 'Марія Брові', specialization: 'Брови' },
-  { id: '3', name: 'Олена Вії', specialization: 'Вії' },
-  { id: '4', name: 'Катерина Педикюр', specialization: 'Педикюр' },
-  { id: '5', name: 'Вікторія Манікюр', specialization: 'Манікюр' },
-  { id: '6', name: 'Софія Брови', specialization: 'Брови' },
-  { id: '7', name: 'Тетяна Вії', specialization: 'Вії' },
-  { id: '8', name: 'Наталія Педикюр', specialization: 'Педикюр' },
-  { id: '9', name: 'Ірина Манікюр', specialization: 'Манікюр' },
-  { id: '10', name: 'Оксана Брови', specialization: 'Брови' },
-  { id: '11', name: 'Юлія Вії', specialization: 'Вії' },
-  { id: '12', name: 'Світлана Педикюр', specialization: 'Педикюр' },
-  { id: '13', name: 'Тетяна Манікюр', specialization: 'Манікюр' },
-  { id: '14', name: 'Надія Брови', specialization: 'Брови' },
-  { id: '15', name: 'Аліна Вії', specialization: 'Вії' },
-  { id: '16', name: 'Валерія Педикюр', specialization: 'Педикюр' },
-  { id: '17', name: 'Діана Манікюр', specialization: 'Манікюр' },
-  { id: '18', name: 'Катерина Брови', specialization: 'Брови' },
-  { id: '19', name: 'Маргарита Вії', specialization: 'Вії' },
-  { id: '20', name: 'Олена Педикюр', specialization: 'Педикюр' },
-];
+import { MOCK_MASTERS, MasterData } from '../data/masters';
 
 export interface Booking {
   id: string;
@@ -59,6 +36,10 @@ export interface MasterProfile {
   services: MasterService[];
 }
 
+export interface MasterWithServices extends MasterData {
+  services: string[];
+}
+
 interface BookingContextType {
   bookings: Booking[];
   masterProfiles: MasterProfile[];
@@ -68,6 +49,7 @@ interface BookingContextType {
   getBookingsByClient: (clientId: string) => Booking[];
   isTimeSlotBooked: (masterId: string, date: string, time: string) => boolean;
   isTimeSlotAvailableGlobally: (date: string, time: string) => boolean;
+  getMastersWithDynamicServices: () => MasterWithServices[];
   getMasterProfile: (masterId: string) => MasterProfile | undefined;
   updateMasterProfile: (masterId: string, profile: Partial<MasterProfile>) => void;
   addMasterService: (masterId: string, service: Omit<MasterService, 'id'>) => void;
@@ -160,6 +142,35 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     return MOCK_MASTERS.some(master => 
       !isTimeSlotBooked(master.id, date, time)
     );
+  };
+
+  const getMastersWithDynamicServices = (): MasterWithServices[] => {
+    return MOCK_MASTERS.map(master => {
+      const profile = getMasterProfile(master.id);
+      const dynamicServices = profile?.services || [];
+      
+      // If master has dynamic services, use them; otherwise use default services
+      const services = dynamicServices.length > 0 
+        ? dynamicServices.map(service => service.name)
+        : getDefaultServicesForMaster(master.specialization);
+      
+      return {
+        ...master,
+        services: services
+      };
+    });
+  };
+
+  // Helper function to get default services based on specialization
+  const getDefaultServicesForMaster = (specialization: string) => {
+    const defaultServices: { [key: string]: string[] } = {
+      'Манікюр': ['Класичний манікюр', 'Гель-лак', 'Френч', 'Нейл-арт'],
+      'Брови': ['Корекція бровей', 'Фарбування бровей', 'Ламінування бровей', 'Татуаж бровей'],
+      'Вії': ['Нарощування вій', 'Ламінування вій', 'Догляд за віями', 'Фарбування вій'],
+      'Педикюр': ['Класичний педикюр', 'Апаратний педикюр', 'Парафінотерапія', 'Догляд за нігтями']
+    };
+    
+    return defaultServices[specialization] || [];
   };
 
   const getMasterProfile = (masterId: string) => {
@@ -262,6 +273,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     getBookingsByClient,
     isTimeSlotBooked,
     isTimeSlotAvailableGlobally,
+    getMastersWithDynamicServices,
     getMasterProfile,
     updateMasterProfile,
     addMasterService,

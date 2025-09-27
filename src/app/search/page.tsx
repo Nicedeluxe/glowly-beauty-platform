@@ -3,11 +3,12 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
-import { useBooking } from '../../contexts/BookingContext';
+import { useBooking, MasterWithServices } from '../../contexts/BookingContext';
 import Avatar from '../../components/Avatar';
+import { MOCK_MASTERS } from '../../data/masters';
 
 // Extended mock data for masters with proper categories
-const MOCK_MASTERS = [
+const MOCK_MASTERS_EXTENDED = [
   {
     id: '1',
     name: 'Анна Красива',
@@ -313,14 +314,14 @@ const MOCK_MASTERS = [
 function SearchContent() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { isTimeSlotBooked, isTimeSlotAvailableGlobally, addBooking } = useBooking();
+  const { isTimeSlotBooked, isTimeSlotAvailableGlobally, addBooking, getMastersWithDynamicServices } = useBooking();
   const query = searchParams.get('q') || '';
   const searchDate = searchParams.get('date') || '';
   const searchTime = searchParams.get('time') || '';
   const userLat = parseFloat(searchParams.get('lat') || '50.4501');
   const userLng = parseFloat(searchParams.get('lng') || '30.5234');
   
-  const [filteredMasters, setFilteredMasters] = useState(MOCK_MASTERS);
+  const [filteredMasters, setFilteredMasters] = useState<MasterWithServices[]>([]);
   const [selectedMaster, setSelectedMaster] = useState<typeof MOCK_MASTERS[0] | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -405,7 +406,8 @@ function SearchContent() {
   useEffect(() => {
     if (query) {
       const searchTerm = query.toLowerCase().trim();
-      let filtered = MOCK_MASTERS.filter(master => {
+      const mastersWithDynamicServices = getMastersWithDynamicServices();
+      let filtered = mastersWithDynamicServices.filter(master => {
         // Точное совпадение по специализации
         if (master.specialization.toLowerCase() === searchTerm) {
           return true;
@@ -462,7 +464,7 @@ function SearchContent() {
       setFilteredMasters(filtered);
     } else {
       // If no search query but date and time are specified, filter by availability
-      let allMasters = MOCK_MASTERS;
+      let allMasters = getMastersWithDynamicServices();
       if (searchDate && searchTime) {
         allMasters = allMasters.filter((master) => {
           const isBooked = bookedSlots.includes(searchTime) || isTimeSlotBooked(master.id, searchDate, searchTime);
@@ -483,7 +485,14 @@ function SearchContent() {
       
       setFilteredMasters(allMasters);
     }
-  }, [query, searchDate, searchTime, userLat, userLng, bookedSlots, isTimeSlotBooked, isTimeSlotAvailableGlobally]);
+  }, [query, searchDate, searchTime, userLat, userLng, bookedSlots, isTimeSlotBooked, isTimeSlotAvailableGlobally, getMastersWithDynamicServices]);
+
+  // Initialize filteredMasters with dynamic services
+  useEffect(() => {
+    if (filteredMasters.length === 0) {
+      setFilteredMasters(getMastersWithDynamicServices());
+    }
+  }, [getMastersWithDynamicServices, filteredMasters.length]);
 
 
   const getCalendarDates = () => {
