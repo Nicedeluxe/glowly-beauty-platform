@@ -33,7 +33,15 @@ interface WorkSchedule {
 
 export default function MasterDashboard() {
   const { user } = useAuth();
-  const { getBookingsByMaster, cancelBooking } = useBooking();
+  const { 
+    getBookingsByMaster, 
+    cancelBooking, 
+    getMasterProfile, 
+    updateMasterProfile, 
+    addMasterService, 
+    updateMasterService, 
+    removeMasterService 
+  } = useBooking();
   const [activeTab, setActiveTab] = useState<'profile' | 'services' | 'schedule' | 'appointments'>('profile');
   const [masterProfile, setMasterProfile] = useState({
     name: '',
@@ -44,11 +52,13 @@ export default function MasterDashboard() {
   });
   const [profileImage, setProfileImage] = useState<File | null>(null);
   
-  const [services, setServices] = useState<Service[]>([
+  // Get services from booking context
+  const masterProfileData = user ? getMasterProfile(user.id) : undefined;
+  const services: Service[] = masterProfileData?.services || [
     { id: '1', name: 'Манікюр + покриття гель-лаком', price: 400, duration: 90 },
     { id: '2', name: 'Педікюр', price: 350, duration: 120 },
     { id: '3', name: 'Дизайн нігтів', price: 150, duration: 30 }
-  ]);
+  ];
   
   const [workSchedule, setWorkSchedule] = useState<WorkSchedule[]>([
     { day: 'Понеділок', isWorking: true, startTime: '09:00', endTime: '18:00' },
@@ -104,23 +114,25 @@ export default function MasterDashboard() {
   };
 
   const addService = () => {
-    const newService: Service = {
-      id: Date.now().toString(),
-      name: '',
-      price: 0,
-      duration: 60
-    };
-    setServices([...services, newService]);
+    if (user) {
+      addMasterService(user.id, {
+        name: '',
+        price: 0,
+        duration: 60
+      });
+    }
   };
 
   const updateService = (id: string, field: keyof Service, value: string | number) => {
-    setServices(services.map(service => 
-      service.id === id ? { ...service, [field]: value } : service
-    ));
+    if (user) {
+      updateMasterService(user.id, id, { [field]: value });
+    }
   };
 
   const removeService = (id: string) => {
-    setServices(services.filter(service => service.id !== id));
+    if (user) {
+      removeMasterService(user.id, id);
+    }
   };
 
   const updateSchedule = (day: string, field: keyof WorkSchedule, value: boolean | string) => {
