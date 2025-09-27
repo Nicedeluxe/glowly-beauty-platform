@@ -9,7 +9,8 @@ export default function AuthPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    userType: 'CLIENT' as 'CLIENT' | 'MASTER'
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -31,7 +32,13 @@ export default function AuthPage() {
         const success = await login(formData.email, formData.password, userType);
         if (success) {
           setSuccess('Успішний вхід!');
-          setTimeout(() => router.push('/'), 1000);
+          setTimeout(() => {
+            if (userType === 'MASTER') {
+              router.push('/master-dashboard');
+            } else {
+              router.push('/dashboard');
+            }
+          }, 1000);
         } else {
           setError('Невірний email, пароль або тип користувача');
         }
@@ -39,7 +46,13 @@ export default function AuthPage() {
         const success = await register(formData.name, formData.email, formData.password, userType);
         if (success) {
           setSuccess('Реєстрація успішна! Ви увійшли в систему.');
-          setTimeout(() => router.push('/'), 1000);
+          setTimeout(() => {
+            if (userType === 'MASTER') {
+              router.push('/master-dashboard');
+            } else {
+              router.push('/dashboard');
+            }
+          }, 1000);
         } else {
           setError('Користувач з таким email вже існує');
         }

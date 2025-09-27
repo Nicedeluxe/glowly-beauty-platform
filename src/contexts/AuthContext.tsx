@@ -7,6 +7,13 @@ export interface User {
   email: string;
   type: 'CLIENT' | 'MASTER';
   avatar?: string;
+  phone?: string;
+  birthDate?: string;
+  masterInfo?: {
+    salonName?: string;
+    services: string[];
+    workSchedule: Record<string, { isWorking: boolean; startTime: string; endTime: string }>;
+  };
 }
 
 interface AuthContextType {
@@ -27,7 +34,9 @@ const MOCK_USERS: (User & { password: string })[] = [
     email: 'anna@example.com',
     password: 'password123',
     type: 'CLIENT',
-    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face'
+    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+    phone: '+380 67 123 45 67',
+    birthDate: '1990-05-15'
   },
   {
     id: '2',
@@ -35,7 +44,21 @@ const MOCK_USERS: (User & { password: string })[] = [
     email: 'maria@example.com',
     password: 'password123',
     type: 'MASTER',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    phone: '+380 67 234 56 78',
+    masterInfo: {
+      salonName: 'Салон краси "Glowly"',
+      services: ['Манікюр', 'Педікюр', 'Дизайн нігтів'],
+      workSchedule: {
+        'Понеділок': { isWorking: true, startTime: '09:00', endTime: '18:00' },
+        'Вівторок': { isWorking: true, startTime: '09:00', endTime: '18:00' },
+        'Середа': { isWorking: true, startTime: '09:00', endTime: '18:00' },
+        'Четвер': { isWorking: true, startTime: '09:00', endTime: '18:00' },
+        'П\'ятниця': { isWorking: true, startTime: '09:00', endTime: '18:00' },
+        'Субота': { isWorking: true, startTime: '10:00', endTime: '16:00' },
+        'Неділя': { isWorking: false, startTime: '09:00', endTime: '18:00' }
+      }
+    }
   },
   {
     id: '3',
@@ -43,7 +66,9 @@ const MOCK_USERS: (User & { password: string })[] = [
     email: 'alex@example.com',
     password: 'password123',
     type: 'CLIENT',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    phone: '+380 67 345 67 89',
+    birthDate: '1985-12-03'
   }
 ];
 
@@ -76,7 +101,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: foundUser.name,
         email: foundUser.email,
         type: foundUser.type,
-        avatar: foundUser.avatar
+        avatar: foundUser.avatar,
+        phone: foundUser.phone,
+        birthDate: foundUser.birthDate,
+        masterInfo: foundUser.masterInfo
       };
       
       setUser(userData);

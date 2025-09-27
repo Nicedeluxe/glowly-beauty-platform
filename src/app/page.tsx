@@ -188,7 +188,7 @@ export default function HomePage() {
         </form>
 
         {/* Quick categories */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto mb-8">
           {[
             { name: 'Манікюр', emoji: '💅' },
             { name: 'Педикюр', emoji: '🦶' },
@@ -204,6 +204,34 @@ export default function HomePage() {
               <div className="text-white text-sm font-medium">{category.name}</div>
             </button>
           ))}
+        </div>
+
+        {/* Auth buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          {user ? (
+            <div className="flex items-center space-x-4">
+              <span className="text-white">Привіт, {user.name}</span>
+              <Link
+                href={user.type === 'MASTER' ? '/master-dashboard' : '/dashboard'}
+                className="px-6 py-3 bg-white/20 text-white font-medium rounded-xl hover:bg-white/30 transition-colors"
+              >
+                {user.type === 'MASTER' ? 'Кабінет майстра' : 'Мій кабінет'}
+              </Link>
+              <button 
+                onClick={logout}
+                className="px-6 py-3 bg-white/20 text-white font-medium rounded-xl hover:bg-white/30 transition-colors"
+              >
+                Вийти
+              </button>
+            </div>
+          ) : (
+            <Link 
+              href="/auth" 
+              className="px-8 py-4 bg-white/20 text-white font-semibold rounded-xl hover:bg-white/30 transition-colors"
+            >
+              Увійти / Реєстрація
+            </Link>
+          )}
         </div>
 
         {/* Auth buttons */}
