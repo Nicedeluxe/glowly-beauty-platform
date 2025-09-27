@@ -32,6 +32,39 @@ export default function HomePage() {
     return dates;
   };
 
+  const getCalendarDates = () => {
+    const today = new Date();
+    const calendarDates = [];
+    
+    // Get the start of the current week (Monday)
+    const startOfWeek = new Date(today);
+    const dayOfWeek = today.getDay();
+    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    startOfWeek.setDate(today.getDate() - daysToMonday);
+    
+    // Generate 14 days starting from Monday of current week
+    for (let i = 0; i < 14; i++) {
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + i);
+      
+      const dateStr = date.toISOString().split('T')[0];
+      const isPast = date < today;
+      const isAvailable = !isPast && i >= 1; // Available from tomorrow
+      
+      calendarDates.push({
+        date: dateStr,
+        dateObj: date,
+        dayName: date.toLocaleDateString('uk-UA', { weekday: 'short' }),
+        dayNumber: date.getDate(),
+        month: date.toLocaleDateString('uk-UA', { month: 'short' }),
+        isPast,
+        isAvailable
+      });
+    }
+    
+    return calendarDates;
+  };
+
   // Get user location
   const getUserLocation = () => {
     if (navigator.geolocation) {
@@ -205,32 +238,61 @@ export default function HomePage() {
               <p className="text-white font-semibold text-lg">{searchQuery}</p>
             </div>
 
-            {/* Date Selection */}
+            {/* Date Selection - Calendar Layout */}
             <div className="mb-6">
               <p className="text-white/80 text-sm mb-3">Дата:</p>
-              <div className="grid grid-cols-2 gap-2">
-                {getAvailableDates().map((date) => {
-                  const dateObj = new Date(date);
-                  const dayName = dateObj.toLocaleDateString('uk-UA', { weekday: 'short' });
-                  const dayNumber = dateObj.getDate();
-                  const month = dateObj.toLocaleDateString('uk-UA', { month: 'short' });
-                  
-                  return (
-                    <button
-                      key={date}
-                      onClick={() => setSelectedDate(date)}
-                      className={`p-3 rounded-xl border transition-colors text-center ${
-                        selectedDate === date
-                          ? 'bg-white text-purple-700 border-white'
-                          : 'bg-white/10 border-white/20 text-white hover:bg-white/15'
-                      }`}
-                    >
-                      <div className="text-xs opacity-80">{dayName}</div>
-                      <div className="font-semibold">{dayNumber}</div>
-                      <div className="text-xs opacity-80">{month}</div>
-                    </button>
-                  );
-                })}
+              
+              {/* Calendar Header */}
+              <div className="grid grid-cols-7 gap-1 mb-2">
+                {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'].map((day) => (
+                  <div key={day} className="text-center text-xs text-white/60 font-medium py-2">
+                    {day}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Calendar Grid */}
+              <div className="grid grid-cols-7 gap-1">
+                {getCalendarDates().map((dateInfo) => (
+                  <button
+                    key={dateInfo.date}
+                    onClick={() => dateInfo.isAvailable && setSelectedDate(dateInfo.date)}
+                    disabled={!dateInfo.isAvailable}
+                    className={`p-2 rounded-lg border transition-colors text-center min-h-[48px] flex flex-col items-center justify-center ${
+                      selectedDate === dateInfo.date
+                        ? 'bg-white text-purple-700 border-white'
+                        : dateInfo.isPast
+                        ? 'bg-gray-500/20 border-gray-500/30 text-gray-400 cursor-not-allowed'
+                        : dateInfo.isAvailable
+                        ? 'bg-white/10 border-white/20 text-white hover:bg-white/15'
+                        : 'bg-gray-600/20 border-gray-600/30 text-gray-500 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className="text-xs font-medium">{dateInfo.dayNumber}</div>
+                    {dateInfo.isPast && (
+                      <div className="text-[10px] opacity-60">Минуло</div>
+                    )}
+                    {!dateInfo.isPast && !dateInfo.isAvailable && (
+                      <div className="text-[10px] opacity-60">Сьогодні</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Legend */}
+              <div className="flex items-center justify-center gap-4 mt-3 text-xs text-white/60">
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 bg-white/10 rounded border border-white/20"></div>
+                  <span>Доступно</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 bg-white rounded border border-white"></div>
+                  <span>Обрано</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 bg-gray-500/20 rounded border border-gray-500/30"></div>
+                  <span>Недоступно</span>
+                </div>
               </div>
             </div>
 
