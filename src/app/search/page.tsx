@@ -2,6 +2,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useAuth } from '../../contexts/AuthContext';
 
 // New mock data for masters with proper categories
 const MOCK_MASTERS = [
@@ -113,6 +114,7 @@ const MOCK_MASTERS = [
 
 function SearchContent() {
   const searchParams = useSearchParams();
+  const { user } = useAuth();
   const query = searchParams.get('q') || '';
   const searchDate = searchParams.get('date') || '';
   const searchTime = searchParams.get('time') || '';
@@ -389,9 +391,21 @@ function SearchContent() {
               <h1 className="text-2xl font-bold text-white">Glowly</h1>
               </Link>
             </div>
-            <button className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors">
-              Увійти
-            </button>
+            {user ? (
+              <Link
+                href={user.type === 'MASTER' ? '/master-dashboard' : '/dashboard'}
+                className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
+              >
+                {user.name}
+              </Link>
+            ) : (
+              <Link
+                href="/auth"
+                className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
+              >
+                Увійти
+              </Link>
+            )}
           </div>
         </div>
       </div>

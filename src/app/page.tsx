@@ -210,12 +210,11 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           {user ? (
             <div className="flex items-center space-x-4">
-              <span className="text-white">Привіт, {user.name}</span>
               <Link
                 href={user.type === 'MASTER' ? '/master-dashboard' : '/dashboard'}
-                className="px-6 py-3 bg-white/20 text-white font-medium rounded-xl hover:bg-white/30 transition-colors"
+                className="text-white hover:text-white/80 transition-colors cursor-pointer"
               >
-                {user.type === 'MASTER' ? 'Кабінет майстра' : 'Мій кабінет'}
+                Привіт, {user.name}
               </Link>
               <button 
                 onClick={logout}
