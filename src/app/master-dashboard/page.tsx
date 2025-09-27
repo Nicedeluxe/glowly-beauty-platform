@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import Avatar from '../../components/Avatar';
@@ -162,7 +162,7 @@ export default function MasterDashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <Avatar user={user!} size="sm" />
+                {user && <Avatar user={user} size="sm" />}
                 <span className="text-white">Кабінет майстра</span>
               </div>
               <Link 
@@ -188,7 +188,7 @@ export default function MasterDashboard() {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as 'profile' | 'services' | 'schedule' | 'appointments')}
               className={`flex-shrink-0 py-3 px-6 rounded-lg font-medium transition-colors ${
                 activeTab === tab.id
                   ? 'bg-white text-purple-700'
@@ -206,18 +206,20 @@ export default function MasterDashboard() {
             <h2 className="text-2xl font-bold text-white mb-6">Профіль майстра</h2>
             
             {/* Profile Avatar */}
-            <div className="flex items-center space-x-4 mb-8">
-              <Avatar user={user!} size="lg" />
-              <div>
-                <h3 className="text-xl font-semibold text-white">{user?.name}</h3>
-                <p className="text-white/60">{user?.email}</p>
+            {user && (
+              <div className="flex items-center space-x-4 mb-8">
+                <Avatar user={user} size="lg" />
+                <div>
+                  <h3 className="text-xl font-semibold text-white">{user.name}</h3>
+                  <p className="text-white/60">{user.email}</p>
+                </div>
               </div>
-            </div>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white/80 text-sm font-medium mb-2">
-                  Ім'я та прізвище
+                  Ім&apos;я та прізвище
                 </label>
                 <input
                   type="text"

@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
 import Avatar from '../components/Avatar';
 
@@ -21,17 +22,6 @@ export default function HomePage() {
   // Mock data for booked slots (in real app this would come from API)
   const bookedSlots = ['10:00', '14:00', '16:00']; // These slots are already taken
 
-  // Get available dates (next 7 days)
-  const getAvailableDates = () => {
-    const dates = [];
-    const today = new Date();
-    for (let i = 1; i <= 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push(date.toISOString().split('T')[0]);
-    }
-    return dates;
-  };
 
   const getCalendarDates = () => {
     const today = new Date();

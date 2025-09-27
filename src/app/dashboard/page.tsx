@@ -13,6 +13,7 @@ interface Appointment {
   time: string;
   status: 'upcoming' | 'completed' | 'cancelled';
   price: number;
+  phone?: string;
 }
 
 export default function Dashboard() {
@@ -24,7 +25,7 @@ export default function Dashboard() {
     phone: '',
     birthDate: ''
   });
-  const [appointments, setAppointments] = useState<Appointment[]>([
+  const [appointments] = useState<Appointment[]>([
     {
       id: '1',
       masterName: 'Анна Петренко',
@@ -106,7 +107,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <Avatar user={user!} size="sm" />
+                {user && <Avatar user={user} size="sm" />}
                 <span className="text-white">Привіт, {user?.name}</span>
               </div>
               <Link 
@@ -152,18 +153,20 @@ export default function Dashboard() {
             <h2 className="text-2xl font-bold text-white mb-6">Мій профіль</h2>
             
             {/* Profile Avatar */}
-            <div className="flex items-center space-x-4 mb-8">
-              <Avatar user={user!} size="lg" />
-              <div>
-                <h3 className="text-xl font-semibold text-white">{user?.name}</h3>
-                <p className="text-white/60">{user?.email}</p>
+            {user && (
+              <div className="flex items-center space-x-4 mb-8">
+                <Avatar user={user} size="lg" />
+                <div>
+                  <h3 className="text-xl font-semibold text-white">{user.name}</h3>
+                  <p className="text-white/60">{user.email}</p>
+                </div>
               </div>
-            </div>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white/80 text-sm font-medium mb-2">
-                  Ім'я
+                  Ім&apos;я
                 </label>
                 <input
                   type="text"
