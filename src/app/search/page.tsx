@@ -17,6 +17,8 @@ const MOCK_MASTERS = [
     image: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=150&h=150&fit=crop&crop=face',
     services: ['Класичний манікюр', 'Гель-лак', 'Френч', 'Нейл-арт'],
     location: 'Київ, центр',
+    address: 'вул. Хрещатик, 22, Київ, 01001',
+    phone: '+380 67 123 45 67',
     experience: '5 років',
     description: 'Професійний манікюр з використанням якісних матеріалів'
   },
@@ -30,6 +32,8 @@ const MOCK_MASTERS = [
     image: 'https://images.unsplash.com/photo-1594736797933-d0f7c2d0b9b8?w=150&h=150&fit=crop&crop=face',
     services: ['Корекція бровей', 'Фарбування бровей', 'Ламінування бровей', 'Татуаж бровей'],
     location: 'Київ, Поділ',
+    address: 'вул. Андріївський узвіз, 15, Київ, 04070',
+    phone: '+380 50 987 65 43',
     experience: '3 роки',
     description: 'Спеціалізуюся на природній красі бровей'
   },
@@ -43,6 +47,8 @@ const MOCK_MASTERS = [
     image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
     services: ['Нарощування вій', 'Ламінування вій', 'Догляд за віями', 'Фарбування вій'],
     location: 'Київ, Печерськ',
+    address: 'вул. Печерський узвіз, 8, Київ, 01010',
+    phone: '+380 44 234 56 78',
     experience: '7 років',
     description: 'Професійне нарощування та догляд за віями'
   },
@@ -56,6 +62,8 @@ const MOCK_MASTERS = [
     image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
     services: ['Класичний педикюр', 'Апаратний педикюр', 'Парафінотерапія', 'Догляд за нігтями'],
     location: 'Київ, Шевченківський',
+    address: 'вул. Тараса Шевченка, 45, Київ, 01032',
+    phone: '+380 63 345 67 89',
     experience: '4 роки',
     description: 'Професійний педикюр та догляд за ногами'
   },
@@ -69,6 +77,8 @@ const MOCK_MASTERS = [
     image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face',
     services: ['Гель-лак', 'Нарощування нігтів', 'Дізайн нігтів', 'Френч'],
     location: 'Київ, Солом\'янський',
+    address: 'вул. Солом\'янська, 12, Київ, 03110',
+    phone: '+380 67 456 78 90',
     experience: '6 років',
     description: 'Креативний підхід до дизайну нігтів'
   },
@@ -82,6 +92,8 @@ const MOCK_MASTERS = [
     image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150&h=150&fit=crop&crop=face',
     services: ['Корекція бровей', 'Фарбування', 'Ламінування', 'Консультації'],
     location: 'Київ, Оболонь',
+    address: 'пр. Героїв Сталінграду, 35, Київ, 04211',
+    phone: '+380 44 567 89 01',
     experience: '8 років',
     description: 'Експерт з форми та догляду за бровами'
   },
@@ -95,6 +107,8 @@ const MOCK_MASTERS = [
     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
     services: ['Нарощування вій', 'Ламінування', 'Догляд', 'Фарбування'],
     location: 'Київ, центр',
+    address: 'вул. Велика Васильківська, 25, Київ, 01004',
+    phone: '+380 50 678 90 12',
     experience: '5 років',
     description: 'Професійне нарощування природних вій'
   },
@@ -108,6 +122,8 @@ const MOCK_MASTERS = [
     image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
     services: ['Апаратний педикюр', 'Класичний педикюр', 'Парафінотерапія', 'Масаж ніг'],
     location: 'Київ, Поділ',
+    address: 'вул. Контрактова площа, 18, Київ, 04070',
+    phone: '+380 63 789 01 23',
     experience: '4 роки',
     description: 'Спеціалізуюся на апаратному педикюрі'
   }
@@ -732,6 +748,14 @@ function SearchContent() {
                   <div className="flex justify-between">
                     <span className="text-white/80">Майстер:</span>
                     <span className="text-white font-medium">{selectedMaster.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-white/80">Адреса:</span>
+                    <span className="text-white font-medium text-sm">{selectedMaster.address}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-white/80">Телефон:</span>
+                    <span className="text-white font-medium">{selectedMaster.phone}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/80">Дата:</span>
