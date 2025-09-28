@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useBooking } from '../../../contexts/BookingContext';
+import { useBooking, Booking } from '../../../contexts/BookingContext';
 import Link from 'next/link';
 
 export default function PaymentFailedPage() {
@@ -10,7 +10,7 @@ export default function PaymentFailedPage() {
   const searchParams = useSearchParams();
   const { getBookingById, cancelBooking } = useBooking();
   
-  const [booking, setBooking] = useState<any>(null);
+  const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

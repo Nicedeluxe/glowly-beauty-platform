@@ -61,6 +61,8 @@ interface BookingContextType {
   removeMasterService: (masterId: string, serviceId: string) => void;
   rescheduleBooking: (bookingId: string, newDate: string, newTime: string) => void;
   refundBooking: (bookingId: string) => void;
+  updateBookingStatus: (bookingId: string, status: 'confirmed' | 'cancelled' | 'completed' | 'paid') => void;
+  getBookingById: (bookingId: string) => Booking | undefined;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);

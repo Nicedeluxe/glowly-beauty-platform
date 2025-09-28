@@ -272,7 +272,7 @@ export default function PaymentPage() {
               </div>
               
               <div>
-                <label className="block text-purple-200 text-sm mb-2">Ім'я на картці</label>
+                <label className="block text-purple-200 text-sm mb-2">Ім&apos;я на картці</label>
                 <input
                   type="text"
                   value={cardholderName}

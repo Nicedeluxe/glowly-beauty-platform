@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useBooking } from '../../../contexts/BookingContext';
+import { useBooking, Booking } from '../../../contexts/BookingContext';
 import Link from 'next/link';
 
 export default function PaymentSuccessPage() {
@@ -10,7 +10,7 @@ export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const { getBookingById } = useBooking();
   
-  const [booking, setBooking] = useState<any>(null);
+  const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function PaymentSuccessPage() {
             <div className="flex items-start space-x-3">
               <span className="text-yellow-400 text-lg">📞</span>
               <div>
-                <p className="text-white font-medium">Можете зв'язатися з майстром</p>
+                <p className="text-white font-medium">Можете зв&apos;язатися з майстром</p>
                 <p className="text-purple-200 text-sm">Телефон: {booking.masterPhone}</p>
               </div>
             </div>
