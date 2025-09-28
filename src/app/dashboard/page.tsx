@@ -35,16 +35,23 @@ export default function Dashboard() {
   const [newTime, setNewTime] = useState<string>('');
   // Get appointments from booking context
   const bookings = getBookingsByClient(user?.id || '');
-  const appointments: Appointment[] = bookings.map(booking => ({
-    id: booking.id,
-    masterName: booking.masterName,
-    service: booking.services.join(', '),
-    date: booking.date,
-    time: booking.time,
-    status: booking.status === 'confirmed' ? 'upcoming' : booking.status === 'cancelled' ? 'cancelled' : 'completed',
-    price: booking.totalPrice,
-    masterPhone: booking.masterPhone
-  }));
+  const appointments: Appointment[] = bookings
+    .map(booking => ({
+      id: booking.id,
+      masterName: booking.masterName,
+      service: booking.services.join(', '),
+      date: booking.date,
+      time: booking.time,
+      status: booking.status === 'confirmed' ? 'upcoming' : booking.status === 'cancelled' ? 'cancelled' : 'completed',
+      price: booking.totalPrice,
+      masterPhone: booking.masterPhone
+    }))
+    .sort((a, b) => {
+      // Сортируем по дате: сначала ближайшие даты
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA.getTime() - dateB.getTime();
+    });
 
   useEffect(() => {
     if (user) {
