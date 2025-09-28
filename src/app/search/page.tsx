@@ -126,9 +126,11 @@ function SearchContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
-                <span className="text-purple-900 font-bold text-lg">✨</span>
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="Glowly" 
+                className="w-8 h-8"
+              />
               <span className="text-white text-xl font-bold">Glowly</span>
             </Link>
             
@@ -227,10 +229,10 @@ function SearchContent() {
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-yellow-400">{master.price}</span>
+                  <span className="text-2xl font-bold text-purple-600">{master.price}</span>
                   <button
                     onClick={() => handleBookAppointment(master)}
-                    className="bg-yellow-400 text-purple-900 px-6 py-2 rounded-lg font-medium hover:bg-yellow-300 transition-colors"
+                    className="bg-white text-purple-900 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
                   >
                     Записатися
                   </button>
