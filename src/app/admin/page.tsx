@@ -329,7 +329,6 @@ export default function AdminPage() {
             </div>
           )}
         </div>
-      </div>
 
       {/* Document Review Modal */}
       {selectedRequest && (
