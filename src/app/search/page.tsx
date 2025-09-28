@@ -149,90 +149,108 @@ function SearchContent() {
       </header>
 
       {/* Search Results */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Search Info */}
-        <div className="bg-purple-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8">
-          <h1 className="text-3xl font-bold text-white mb-4">
+        <div className="bg-purple-800/30 backdrop-blur-sm rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
             Результати пошуку: &quot;{query}&quot;
           </h1>
           
-          <div className="flex flex-wrap items-center gap-4 text-purple-200">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-purple-200 text-sm sm:text-base">
             {searchDate && (
               <>
-                <span>✨ {searchDate}</span>
+                <span className="flex items-center">
+                  <span className="mr-1">✨</span>
+                  <span>{searchDate}</span>
+                </span>
               </>
             )}
             {searchTime && (
               <>
-                <span>⏰ {searchTime}</span>
+                <span className="flex items-center">
+                  <span className="mr-1">⏰</span>
+                  <span>{searchTime}</span>
+                </span>
               </>
             )}
-            <span>🌸 Сортовано по відстані</span>
+            <span className="flex items-center">
+              <span className="mr-1">🌸</span>
+              <span>Сортовано по відстані</span>
+            </span>
           </div>
           
-          <p className="text-white/80 mt-4">
+          <p className="text-white/80 mt-3 sm:mt-4 text-sm sm:text-base">
             Знайдено {filteredMasters.length} майстрів доступних у вибраний час
           </p>
         </div>
 
         {/* Masters Grid */}
         {filteredMasters.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredMasters.map((master) => (
-              <div key={master.id} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300">
-                <div className="flex items-start space-x-4 mb-4">
+              <div key={master.id} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 hover:bg-white/20 transition-all duration-300">
+                <div className="flex items-start space-x-3 sm:space-x-4 mb-4">
                   <img 
                     src={master.image} 
                     alt={master.name}
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover flex-shrink-0"
                   />
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-1">{master.name}</h3>
-                    <p className="text-purple-300 text-sm mb-2">{master.specialization}</p>
-                    <div className="flex items-center space-x-2 text-yellow-400">
-                      <span>💫</span>
-                      <span className="font-semibold">{master.rating}</span>
-                      <span className="text-purple-300">({master.reviews} відгуків)</span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-white mb-1 truncate">{master.name}</h3>
+                    <p className="text-purple-300 text-xs sm:text-sm mb-2">{master.specialization}</p>
+                    <div className="flex items-center space-x-1 sm:space-x-2 text-yellow-400">
+                      <span className="text-sm sm:text-base">💫</span>
+                      <span className="font-semibold text-sm sm:text-base">{master.rating}</span>
+                      <span className="text-purple-300 text-xs sm:text-sm">({master.reviews} відгуків)</span>
                     </div>
                   </div>
                 </div>
                 
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-purple-200 text-sm">
-                    <span>🌸 {master.location}</span>
-                    <span>•</span>
-                    <span>🦋 {master.experience}</span>
+                  <div className="flex flex-wrap items-center text-purple-200 text-xs sm:text-sm gap-1 sm:gap-2">
+                    <span className="flex items-center">
+                      <span className="mr-1">🌸</span>
+                      <span className="truncate">{master.location}</span>
+                    </span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="flex items-center">
+                      <span className="mr-1">🦋</span>
+                      <span>{master.experience}</span>
+                    </span>
                     {searchDate && searchTime && (
                       <>
-                        <span>•</span>
-                        <span>
-                          ✨ {master.lat && master.lng ? searchService.calculateDistance(userLat, userLng, master.lat, master.lng).toFixed(1) : '0.0'} км
+                        <span className="hidden sm:inline">•</span>
+                        <span className="flex items-center">
+                          <span className="mr-1">✨</span>
+                          <span>
+                            {master.lat && master.lng ? searchService.calculateDistance(userLat, userLng, master.lat, master.lng).toFixed(1) : '0.0'} км
+                          </span>
                         </span>
                       </>
                     )}
                   </div>
                 </div>
                 
-                <p className="text-purple-200 text-sm mb-4">{master.description}</p>
+                <p className="text-purple-200 text-xs sm:text-sm mb-4 line-clamp-2">{master.description}</p>
                 
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {master.services.slice(0, 3).map((service, index) => (
-                    <span key={index} className="bg-purple-700/50 text-white px-3 py-1 rounded-full text-xs">
+                <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
+                  {master.services.slice(0, 2).map((service, index) => (
+                    <span key={index} className="bg-purple-700/50 text-white px-2 sm:px-3 py-1 rounded-full text-xs truncate">
                       {service}
                     </span>
                   ))}
-                  {master.services.length > 3 && (
-                    <span className="bg-purple-700/50 text-white px-3 py-1 rounded-full text-xs">
-                      +{master.services.length - 3} ще
+                  {master.services.length > 2 && (
+                    <span className="bg-purple-700/50 text-white px-2 sm:px-3 py-1 rounded-full text-xs">
+                      +{master.services.length - 2} ще
                     </span>
                   )}
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-white">{master.price}</span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-lg sm:text-2xl font-bold text-white truncate">{master.price}</span>
                   <button
                     onClick={() => handleBookAppointment(master)}
-                    className="bg-white text-purple-900 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                    className="bg-white text-purple-900 px-3 sm:px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm sm:text-base flex-shrink-0"
                   >
                     Записатися
                   </button>
@@ -241,23 +259,23 @@ function SearchContent() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">💫</div>
-            <h3 className="text-2xl font-bold text-white mb-2">Майстрів не знайдено</h3>
-            <p className="text-purple-200">Спробуйте змінити параметри пошуку</p>
+          <div className="text-center py-8 sm:py-16">
+            <div className="text-4xl sm:text-6xl mb-4">💫</div>
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Майстрів не знайдено</h3>
+            <p className="text-purple-200 text-sm sm:text-base px-4">Спробуйте змінити параметри пошуку</p>
           </div>
         )}
       </div>
 
       {/* Booking Modal */}
       {showBookingModal && selectedMaster && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-purple-900">Запис до {selectedMaster.name}</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-2xl font-bold text-purple-900">Запис до {selectedMaster.name}</h2>
               <button
                 onClick={() => setShowBookingModal(false)}
-                className="text-purple-400 hover:text-purple-600 text-2xl"
+                className="text-purple-400 hover:text-purple-600 text-xl sm:text-2xl"
               >
                 ×
               </button>
@@ -265,14 +283,14 @@ function SearchContent() {
 
             {/* Date Selection */}
             {!searchDate && (
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-purple-900 mb-4">Оберіть дату</h3>
-                <div className="grid grid-cols-7 gap-2">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-base sm:text-lg font-semibold text-purple-900 mb-3 sm:mb-4">Оберіть дату</h3>
+                <div className="grid grid-cols-7 gap-1 sm:gap-2">
                   {getCalendarDates().map((date, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedDate(formatDate(date))}
-                      className={`p-2 text-sm rounded-lg border ${
+                      className={`p-1 sm:p-2 text-xs sm:text-sm rounded-lg border ${
                         selectedDate === formatDate(date)
                           ? 'bg-purple-600 text-white border-purple-600'
                           : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
@@ -287,15 +305,15 @@ function SearchContent() {
 
             {/* Time Selection */}
             {!searchTime && (
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-purple-900 mb-4">Оберіть час</h3>
-                <div className="grid grid-cols-4 gap-2">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-base sm:text-lg font-semibold text-purple-900 mb-3 sm:mb-4">Оберіть час</h3>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-1 sm:gap-2">
                   {timeSlots.map((time) => (
                     <button
                       key={time}
                       onClick={() => setSelectedTime(time)}
                       disabled={selectedDate ? isBooked(selectedDate, time) : false}
-                      className={`p-3 text-sm rounded-lg border ${
+                      className={`p-2 sm:p-3 text-xs sm:text-sm rounded-lg border ${
                         selectedTime === time
                           ? 'bg-purple-600 text-white border-purple-600'
                           : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
@@ -309,46 +327,46 @@ function SearchContent() {
             )}
 
             {/* Service Selection */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-purple-900 mb-4">Оберіть послуги</h3>
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-lg font-semibold text-purple-900 mb-3 sm:mb-4">Оберіть послуги</h3>
               <div className="space-y-2">
                 {selectedMaster.services.map((service, index) => (
-                  <label key={index} className="flex items-center space-x-3">
+                  <label key={index} className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-50 rounded-lg">
                     <input
                       type="checkbox"
                       checked={selectedServices.includes(service)}
                       onChange={() => handleServiceToggle(service)}
-                      className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                      className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 flex-shrink-0"
                     />
-                    <span className="text-gray-700">{service}</span>
+                    <span className="text-gray-700 text-sm sm:text-base">{service}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             {/* Master Info */}
-            <div className="bg-purple-50 rounded-lg p-4 mb-6">
-              <h4 className="font-semibold text-purple-900 mb-2">Інформація про майстра</h4>
-              <p className="text-gray-700">📍 {selectedMaster.address}</p>
-              <p className="text-gray-700">📞 {selectedMaster.phone}</p>
+            <div className="bg-purple-50 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+              <h4 className="font-semibold text-purple-900 mb-2 text-sm sm:text-base">Інформація про майстра</h4>
+              <p className="text-gray-700 text-sm sm:text-base">📍 {selectedMaster.address}</p>
+              <p className="text-gray-700 text-sm sm:text-base">📞 {selectedMaster.phone}</p>
             </div>
 
             {/* Total Price */}
-            <div className="flex items-center justify-between mb-6">
-              <span className="text-lg font-semibold text-purple-900">Загальна вартість:</span>
-              <span className="text-2xl font-bold text-purple-600">{calculateTotalPrice()} грн</span>
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <span className="text-base sm:text-lg font-semibold text-purple-900">Загальна вартість:</span>
+              <span className="text-xl sm:text-2xl font-bold text-purple-600">{calculateTotalPrice()} грн</span>
             </div>
 
             {/* Confirm Button */}
             <button
               onClick={handleConfirmBooking}
               disabled={!selectedDate || !selectedTime || selectedServices.length === 0}
-              className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-purple-600 text-white py-2 sm:py-3 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base"
             >
               Підтвердити запис
             </button>
             
-            <p className="text-yellow-200 text-sm mt-2">✨ После подтверждения вы будете перенаправлены на страницу оплаты</p>
+            <p className="text-yellow-200 text-xs sm:text-sm mt-2">✨ После подтверждения вы будете перенаправлены на страницу оплаты</p>
           </div>
         </div>
       )}
