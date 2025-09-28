@@ -29,7 +29,7 @@ interface ReviewsContextType {
   addReview: (review: Omit<Review, 'id' | 'createdAt'>) => Review;
   getReviewsByMaster: (masterId: string) => Review[];
   getMasterReviews: (masterId: string) => MasterReviews | null;
-  updateMasterRanking: (masters: any[]) => any[]; // Обновляет рейтинг мастеров
+  updateMasterRanking: (masters: any[]) => any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const ReviewsContext = createContext<ReviewsContextType | undefined>(undefined);
@@ -217,7 +217,7 @@ export function ReviewsProvider({ children }: { children: ReactNode }) {
   };
 
   // Функция для обновления рейтинга мастеров
-  const updateMasterRanking = (masters: any[]): any[] => {
+  const updateMasterRanking = (masters: any[]): any[] => { // eslint-disable-line @typescript-eslint/no-explicit-any
     return masters.map(master => {
       const masterReviewData = masterReviews[master.id];
       if (masterReviewData) {

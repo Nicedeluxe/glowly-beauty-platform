@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useReviews, Review } from '../contexts/ReviewsContext';
+import { useReviews } from '../contexts/ReviewsContext';
 import { useAuth } from '../contexts/AuthContext';
 
 interface MasterProfileModalProps {
@@ -22,11 +22,11 @@ interface MasterProfileModalProps {
   };
   isOpen: boolean;
   onClose: () => void;
-  onBook: (master: any) => void;
+  onBook: (master: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export default function MasterProfileModal({ master, isOpen, onClose, onBook }: MasterProfileModalProps) {
-  const { reviews, addReview, getReviewsByMaster } = useReviews();
+  const { addReview, getReviewsByMaster } = useReviews();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'info' | 'reviews'>('info');
   const [showReviewForm, setShowReviewForm] = useState(false);

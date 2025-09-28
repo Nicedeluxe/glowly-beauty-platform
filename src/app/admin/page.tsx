@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 interface VerificationRequest {
@@ -60,7 +59,6 @@ const MOCK_VERIFICATION_REQUESTS: VerificationRequest[] = [
 
 export default function AdminPage() {
   const { user } = useAuth();
-  const router = useRouter();
   const [requests, setRequests] = useState<VerificationRequest[]>(MOCK_VERIFICATION_REQUESTS);
   const [selectedRequest, setSelectedRequest] = useState<VerificationRequest | null>(null);
   const [notes, setNotes] = useState('');
@@ -136,6 +134,7 @@ export default function AdminPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link href="/" className="flex items-center space-x-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/logo.png" alt="Glowly" className="w-8 h-8" />
                 <span className="text-2xl font-bold text-white">Glowly</span>
               </Link>
