@@ -4,13 +4,16 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { useBooking, MasterWithServices } from '../../contexts/BookingContext';
+import { useReviews } from '../../contexts/ReviewsContext';
 import Avatar from '../../components/Avatar';
 import { searchService, SearchFilters } from '../../services/SearchService';
+import MasterProfileModal from '../../components/MasterProfileModal';
 
 function SearchContent() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
   const { isTimeSlotBooked, addBooking, getMastersWithDynamicServices } = useBooking();
+  const { updateMasterRanking } = useReviews();
   const query = searchParams.get('q') || '';
   const searchDate = searchParams.get('date') || '';
   const searchTime = searchParams.get('time') || '';
@@ -24,6 +27,8 @@ function SearchContent() {
   const [selectedTime, setSelectedTime] = useState(searchTime);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [bookingStep, setBookingStep] = useState<'date' | 'time' | 'services' | 'confirm'>('date');
+  const [showMasterProfile, setShowMasterProfile] = useState(false);
+  const [profileMaster, setProfileMaster] = useState<MasterWithServices | null>(null);
 
   // Mock data for time slots
   const timeSlots = [
@@ -47,8 +52,10 @@ function SearchContent() {
       isTimeSlotBooked
     );
 
-    setFilteredMasters(result.masters);
-  }, [query, searchDate, searchTime, userLat, userLng, isTimeSlotBooked, getMastersWithDynamicServices]);
+    // Apply ranking based on reviews
+    const rankedMasters = updateMasterRanking(result.masters);
+    setFilteredMasters(rankedMasters);
+  }, [query, searchDate, searchTime, userLat, userLng, isTimeSlotBooked, getMastersWithDynamicServices, updateMasterRanking]);
 
   const getCalendarDates = () => {
     const today = new Date();
@@ -136,6 +143,16 @@ function SearchContent() {
     // Simple calculation: base price * number of services
     const basePrice = parseInt(selectedMaster.price.replace(/\D/g, ''));
     return basePrice * selectedServices.length;
+  };
+
+  const handleShowMasterProfile = (master: MasterWithServices) => {
+    setProfileMaster(master);
+    setShowMasterProfile(true);
+  };
+
+  const handleCloseMasterProfile = () => {
+    setShowMasterProfile(false);
+    setProfileMaster(null);
   };
 
   return (
@@ -267,12 +284,20 @@ function SearchContent() {
                 
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-lg sm:text-2xl font-bold text-white truncate">{master.price}</span>
-                  <button
-                    onClick={() => handleBookAppointment(master)}
-                    className="bg-white text-purple-900 px-3 sm:px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm sm:text-base flex-shrink-0"
-                  >
-                    Записатися
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleShowMasterProfile(master)}
+                      className="bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors text-sm sm:text-base flex-shrink-0"
+                    >
+                      👁️ Профіль
+                    </button>
+                    <button
+                      onClick={() => handleBookAppointment(master)}
+                      className="bg-white text-purple-900 px-3 sm:px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm sm:text-base flex-shrink-0"
+                    >
+                      Записатися
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -475,6 +500,16 @@ function SearchContent() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Master Profile Modal */}
+      {profileMaster && (
+        <MasterProfileModal
+          master={profileMaster}
+          isOpen={showMasterProfile}
+          onClose={handleCloseMasterProfile}
+          onBook={handleBookAppointment}
+        />
       )}
     </div>
   );

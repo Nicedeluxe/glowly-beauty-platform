@@ -65,7 +65,8 @@ export default function AdminPage() {
   const [selectedRequest, setSelectedRequest] = useState<VerificationRequest | null>(null);
   const [notes, setNotes] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
-  const [activeTab, setActiveTab] = useState<'verification' | 'masters' | 'analytics'>('verification');
+  const [activeTab, setActiveTab] = useState<'verification' | 'masters' | 'analytics' | 'earnings'>('verification');
+  const [earningsPeriod, setEarningsPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
 
   // Проверяем права администратора (в реальном приложении это должно быть на сервере)
   const isAdmin = user?.email === 'admin@glowly.com' || user?.name === 'Admin';
@@ -200,6 +201,16 @@ export default function AdminPage() {
               }`}
             >
               📊 Аналітика
+            </button>
+            <button
+              onClick={() => setActiveTab('earnings')}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                activeTab === 'earnings'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              💰 Заробіток майстрів
             </button>
           </div>
 
@@ -506,6 +517,241 @@ export default function AdminPage() {
                     <div className="text-right">
                       <div className="text-green-400 font-medium">+₴300</div>
                       <div className="text-white/60 text-sm">Комісія: ₴30</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Earnings Statistics Tab */}
+          {activeTab === 'earnings' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white text-center mb-6">Заробіток майстрів</h2>
+              
+              {/* Period Selector */}
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                <button
+                  onClick={() => setEarningsPeriod('week')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    earningsPeriod === 'week'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  Тиждень
+                </button>
+                <button
+                  onClick={() => setEarningsPeriod('month')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    earningsPeriod === 'month'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  Місяць
+                </button>
+                <button
+                  onClick={() => setEarningsPeriod('quarter')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    earningsPeriod === 'quarter'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  Квартал
+                </button>
+                <button
+                  onClick={() => setEarningsPeriod('year')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    earningsPeriod === 'year'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  Рік
+                </button>
+              </div>
+
+              {/* Period Stats */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-green-400">
+                    {earningsPeriod === 'week' ? '₴8,450' : 
+                     earningsPeriod === 'month' ? '₴34,200' : 
+                     earningsPeriod === 'quarter' ? '₴98,500' : '₴420,000'}
+                  </div>
+                  <div className="text-green-300 text-sm">Загальний заробіток</div>
+                </div>
+                <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-blue-400">
+                    {earningsPeriod === 'week' ? '₴845' : 
+                     earningsPeriod === 'month' ? '₴3,420' : 
+                     earningsPeriod === 'quarter' ? '₴9,850' : '₴42,000'}
+                  </div>
+                  <div className="text-blue-300 text-sm">Комісія платформи</div>
+                </div>
+                <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-purple-400">
+                    {earningsPeriod === 'week' ? '₴7,605' : 
+                     earningsPeriod === 'month' ? '₴30,780' : 
+                     earningsPeriod === 'quarter' ? '₴88,650' : '₴378,000'}
+                  </div>
+                  <div className="text-purple-300 text-sm">Заробіток майстрів</div>
+                </div>
+              </div>
+
+              {/* Masters Earnings Ranking */}
+              <div className="bg-white/5 rounded-lg p-6">
+                <h3 className="text-xl font-semibold text-white mb-4">Рейтинг майстрів за заробітком</h3>
+                <div className="space-y-4">
+                  {/* Master 1 */}
+                  <div className="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">
+                        1
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                          М
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-semibold text-white">Марія Петренко</h4>
+                          <p className="text-white/70 text-sm">Мастер нігтів • 4.9⭐ (127 відгуків)</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-green-400">
+                        {earningsPeriod === 'week' ? '₴2,340' : 
+                         earningsPeriod === 'month' ? '₴9,800' : 
+                         earningsPeriod === 'quarter' ? '₴28,500' : '₴125,000'}
+                      </div>
+                      <div className="text-white/60 text-sm">
+                        {earningsPeriod === 'week' ? '45 замовлень' : 
+                         earningsPeriod === 'month' ? '187 замовлень' : 
+                         earningsPeriod === 'quarter' ? '542 замовлення' : '2,340 замовлень'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Master 2 */}
+                  <div className="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold">
+                        2
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                          А
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-semibold text-white">Анна Красива</h4>
+                          <p className="text-white/70 text-sm">Візажист • 4.8⭐ (89 відгуків)</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-green-400">
+                        {earningsPeriod === 'week' ? '₴1,890' : 
+                         earningsPeriod === 'month' ? '₴7,600' : 
+                         earningsPeriod === 'quarter' ? '₴22,800' : '₴98,000'}
+                      </div>
+                      <div className="text-white/60 text-sm">
+                        {earningsPeriod === 'week' ? '32 замовлення' : 
+                         earningsPeriod === 'month' ? '128 замовлень' : 
+                         earningsPeriod === 'quarter' ? '384 замовлення' : '1,680 замовлень'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Master 3 */}
+                  <div className="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                        3
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                          Т
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-semibold text-white">Тетяна Манікюр</h4>
+                          <p className="text-white/70 text-sm">Мастер нігтів • 4.7⭐ (156 відгуків)</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-green-400">
+                        {earningsPeriod === 'week' ? '₴1,650' : 
+                         earningsPeriod === 'month' ? '₴6,400' : 
+                         earningsPeriod === 'quarter' ? '₴19,200' : '₴82,000'}
+                      </div>
+                      <div className="text-white/60 text-sm">
+                        {earningsPeriod === 'week' ? '28 замовлень' : 
+                         earningsPeriod === 'month' ? '112 замовлень' : 
+                         earningsPeriod === 'quarter' ? '336 замовлень' : '1,440 замовлень'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Master 4 */}
+                  <div className="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center text-white font-bold">
+                        4
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                          О
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-semibold text-white">Олена Бровист</h4>
+                          <p className="text-white/70 text-sm">Мастер бровей • 4.9⭐ (203 відгуки)</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-green-400">
+                        {earningsPeriod === 'week' ? '₴1,420' : 
+                         earningsPeriod === 'month' ? '₴5,600' : 
+                         earningsPeriod === 'quarter' ? '₴16,800' : '₴72,000'}
+                      </div>
+                      <div className="text-white/60 text-sm">
+                        {earningsPeriod === 'week' ? '24 замовлення' : 
+                         earningsPeriod === 'month' ? '96 замовлень' : 
+                         earningsPeriod === 'quarter' ? '288 замовлень' : '1,200 замовлень'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Master 5 */}
+                  <div className="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center text-white font-bold">
+                        5
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                          І
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-semibold text-white">Ірина Віїст</h4>
+                          <p className="text-white/70 text-sm">Мастер вій • 4.6⭐ (78 відгуків)</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-green-400">
+                        {earningsPeriod === 'week' ? '₴1,150' : 
+                         earningsPeriod === 'month' ? '₴4,800' : 
+                         earningsPeriod === 'quarter' ? '₴14,400' : '₴61,000'}
+                      </div>
+                      <div className="text-white/60 text-sm">
+                        {earningsPeriod === 'week' ? '18 замовлень' : 
+                         earningsPeriod === 'month' ? '72 замовлення' : 
+                         earningsPeriod === 'quarter' ? '216 замовлень' : '920 замовлень'}
+                      </div>
                     </div>
                   </div>
                 </div>
