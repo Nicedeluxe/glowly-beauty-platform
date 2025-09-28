@@ -162,7 +162,7 @@ function SearchContent() {
             )}
             {searchTime && (
               <>
-                <span>🕐 {searchTime}</span>
+                <span>⏰ {searchTime}</span>
               </>
             )}
             <span>🌸 Сортовано по відстані</span>
