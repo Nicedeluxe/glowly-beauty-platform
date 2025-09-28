@@ -153,10 +153,19 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       const profile = getMasterProfile(master.id);
       const dynamicServices = profile?.services || [];
       
-      // If master has dynamic services, use them; otherwise use default services
-      const services = dynamicServices.length > 0 
-        ? dynamicServices.map(service => service.name)
-        : getDefaultServicesForMaster(master.specialization);
+      // Priority: 1) Dynamic services from profile, 2) Static services from MOCK_MASTERS, 3) Default services
+      let services: string[];
+      
+      if (dynamicServices.length > 0) {
+        // Use dynamic services from master's profile
+        services = dynamicServices.map(service => service.name);
+      } else if (master.services && master.services.length > 0) {
+        // Use static services from MOCK_MASTERS
+        services = master.services;
+      } else {
+        // Use default services based on specialization
+        services = getDefaultServicesForMaster(master.specialization);
+      }
       
       return {
         ...master,

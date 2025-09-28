@@ -414,10 +414,6 @@ function SearchContent() {
           service.toLowerCase() === searchTerm
         );
         
-        // Debug logging
-        if (searchTerm === 'манікюр') {
-          console.log(`Master: ${master.name}, Services: ${master.services.join(', ')}, HasService: ${hasService}`);
-        }
         
         if (hasService) {
           return true;
