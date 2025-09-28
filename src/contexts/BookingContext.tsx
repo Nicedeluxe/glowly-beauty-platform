@@ -1,7 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { MOCK_MASTERS, MasterData } from '../data/masters';
+import { MOCK_MASTERS } from '../data/masters';
+import { MasterData } from '../types/MasterData';
 
 export interface Booking {
   id: string;
@@ -38,6 +39,8 @@ export interface MasterProfile {
 
 export interface MasterWithServices extends MasterData {
   services: string[];
+  lat?: number;
+  lng?: number;
 }
 
 interface BookingContextType {
@@ -167,13 +170,43 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         services = [];
       }
       
+      const coordinates = getMasterCoordinates(master.name);
+      
       return {
         ...master,
-        services: services
+        services: services,
+        lat: coordinates.lat,
+        lng: coordinates.lng
       };
     });
   };
 
+  // Helper function to get master coordinates
+  const getMasterCoordinates = (masterName: string): { lat: number; lng: number } => {
+    const coordinates: { [key: string]: { lat: number; lng: number } } = {
+      'Анна Красива': { lat: 50.4501, lng: 30.5234 }, // Хрещатик, 22
+      'Марія Брові': { lat: 50.4598, lng: 30.5194 }, // Андріївський узвіз, 15
+      'Олена Вії': { lat: 50.4264, lng: 30.5382 }, // Печерський узвіз, 8
+      'Катерина Педикюр': { lat: 50.4289, lng: 30.5169 }, // Володимирська, 45
+      'Вікторія Манікюр': { lat: 50.4319, lng: 30.5169 }, // Повітрофлотський проспект, 45
+      'Софія Брови': { lat: 50.4414, lng: 30.5130 }, // Тарасівська, 30
+      'Тетяна Вії': { lat: 50.4501, lng: 30.5234 }, // Хрещатик, 1
+      'Наталія Педикюр': { lat: 50.4598, lng: 30.5194 }, // Андріївський узвіз, 25
+      'Ірина Манікюр': { lat: 50.4264, lng: 30.5382 }, // Печерський узвіз, 15
+      'Оксана Брови': { lat: 50.4289, lng: 30.5169 }, // Володимирська, 60
+      'Юлія Вії': { lat: 50.4319, lng: 30.5169 }, // Повітрофлотський проспект, 60
+      'Світлана Педикюр': { lat: 50.4414, lng: 30.5130 }, // Тарасівська, 45
+      'Тетяна Манікюр': { lat: 50.4501, lng: 30.5234 }, // Хрещатик, 10
+      'Надія Брови': { lat: 50.4598, lng: 30.5194 }, // Андріївський узвіз, 35
+      'Аліна Вії': { lat: 50.4264, lng: 30.5382 }, // Печерський узвіз, 25
+      'Діана Манікюр': { lat: 50.4289, lng: 30.5169 }, // Володимирська, 75
+      'Маргарита Вії': { lat: 50.4319, lng: 30.5169 }, // Повітрофлотський проспект, 75
+      'Валерія Педикюр': { lat: 50.4414, lng: 30.5130 }, // Тарасівська, 60
+      'Олена Педикюр': { lat: 50.4501, lng: 30.5234 }, // Хрещатик, 15
+      'Катерина Брови': { lat: 50.4598, lng: 30.5194 }, // Андріївський узвіз, 45
+    };
+    return coordinates[masterName] || { lat: 50.4501, lng: 30.5234 };
+  };
 
   const getMasterProfile = (masterId: string) => {
     return masterProfiles.find(profile => profile.id === masterId);

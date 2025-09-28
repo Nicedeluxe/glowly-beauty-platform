@@ -1,18 +1,4 @@
-export interface MasterData {
-  id: string;
-  name: string;
-  specialization: string;
-  rating: number;
-  reviews: number;
-  price: string;
-  image: string;
-  services: string[];
-  location: string;
-  address: string;
-  phone: string;
-  experience: string;
-  description: string;
-}
+import { MasterData } from '../types/MasterData';
 
 export const MOCK_MASTERS: MasterData[] = [
   {

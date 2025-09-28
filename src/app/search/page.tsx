@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useBooking, MasterWithServices } from '../../contexts/BookingContext';
 import Avatar from '../../components/Avatar';
 import { MOCK_MASTERS } from '../../data/masters';
+import { searchService, SearchFilters } from '../../services/SearchService';
 
 // Extended mock data for masters with proper categories
 const MOCK_MASTERS_EXTENDED = [
