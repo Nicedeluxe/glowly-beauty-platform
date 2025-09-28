@@ -101,14 +101,14 @@ function SearchContent() {
       createdAt: new Date().toISOString()
     };
 
-    addBooking(booking);
+    const createdBooking = addBooking(booking);
     setShowBookingModal(false);
     
-    console.log('Booking created:', booking);
-    console.log('Redirecting to payment page with bookingId:', booking.id);
+    console.log('Booking created:', createdBooking);
+    console.log('Redirecting to payment page with bookingId:', createdBooking.id);
     
     // Redirect to payment page
-    window.location.href = `/payment?bookingId=${booking.id}`;
+    window.location.href = `/payment?bookingId=${createdBooking.id}`;
   };
 
   const handleServiceToggle = (service: string) => {

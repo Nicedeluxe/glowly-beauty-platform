@@ -47,7 +47,7 @@ export interface MasterWithServices extends MasterData {
 interface BookingContextType {
   bookings: Booking[];
   masterProfiles: MasterProfile[];
-  addBooking: (booking: Omit<Booking, 'id' | 'status' | 'createdAt'>) => void;
+  addBooking: (booking: Omit<Booking, 'id' | 'status' | 'createdAt'>) => Booking;
   cancelBooking: (bookingId: string) => void;
   getBookingsByMaster: (masterId: string) => Booking[];
   getBookingsByClient: (clientId: string) => Booking[];
@@ -105,7 +105,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('glowly-master-profiles', JSON.stringify(masterProfiles));
   }, [masterProfiles]);
 
-  const addBooking = (bookingData: Omit<Booking, 'id' | 'status' | 'createdAt'>) => {
+  const addBooking = (bookingData: Omit<Booking, 'id' | 'status' | 'createdAt'>): Booking => {
     const newBooking: Booking = {
       ...bookingData,
       id: `booking-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -114,6 +114,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     };
     
     setBookings(prev => [...prev, newBooking]);
+    return newBooking;
   };
 
   const cancelBooking = (bookingId: string) => {
