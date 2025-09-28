@@ -407,54 +407,33 @@ function SearchContent() {
     if (query) {
       const searchTerm = query.toLowerCase().trim();
       const mastersWithDynamicServices = getMastersWithDynamicServices();
+      
+      // Определяем тип поиска
+      const isServiceSearch = ['манікюр', 'педикюр', 'брови', 'вії'].includes(searchTerm);
+      
       let filtered = mastersWithDynamicServices.filter(master => {
-        // Для точных запросов услуг проверяем только услуги
-        const exactServiceTerms = ['манікюр', 'педикюр', 'брови', 'вії'];
-        const isExactServiceQuery = exactServiceTerms.includes(searchTerm);
-        
-        if (isExactServiceQuery) {
-          // Только проверяем услуги для точных запросов
+        if (isServiceSearch) {
+          // Строгий поиск по услугам - только мастера с конкретной услугой
           return master.services.some(service => 
-            service.toLowerCase().includes(searchTerm) || 
-            service.toLowerCase() === searchTerm
+            service.toLowerCase().includes(searchTerm)
+          );
+        } else {
+          // Общий поиск - проверяем все поля
+          return (
+            // Поиск по услугам
+            master.services.some(service => 
+              service.toLowerCase().includes(searchTerm)
+            ) ||
+            // Поиск по специализации
+            master.specialization.toLowerCase().includes(searchTerm) ||
+            // Поиск по имени
+            master.name.toLowerCase().includes(searchTerm) ||
+            // Поиск по локации
+            master.location.toLowerCase().includes(searchTerm) ||
+            // Поиск по описанию
+            master.description.toLowerCase().includes(searchTerm)
           );
         }
-        
-        // Для общих запросов проверяем все поля
-        const hasService = master.services.some(service => 
-          service.toLowerCase().includes(searchTerm) || 
-          service.toLowerCase() === searchTerm
-        );
-        
-        if (hasService) {
-          return true;
-        }
-        
-        // Проверяем специализацию
-        if (master.specialization.toLowerCase() === searchTerm) {
-          return true;
-        }
-        
-        if (master.specialization.toLowerCase().includes(searchTerm)) {
-          return true;
-        }
-        
-        // Поиск по имени
-        if (master.name.toLowerCase().includes(searchTerm)) {
-          return true;
-        }
-        
-        // Поиск по локации
-        if (master.location.toLowerCase().includes(searchTerm)) {
-          return true;
-        }
-        
-        // Поиск по описанию
-        if (master.description.toLowerCase().includes(searchTerm)) {
-          return true;
-        }
-        
-        return false;
       });
 
       // Filter by available time slots if date and time are specified
