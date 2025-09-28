@@ -408,18 +408,29 @@ function SearchContent() {
       const searchTerm = query.toLowerCase().trim();
       const mastersWithDynamicServices = getMastersWithDynamicServices();
       let filtered = mastersWithDynamicServices.filter(master => {
-        // Сначала проверяем услуги - это приоритет для точного поиска
+        // Для точных запросов услуг проверяем только услуги
+        const exactServiceTerms = ['манікюр', 'педикюр', 'брови', 'вії'];
+        const isExactServiceQuery = exactServiceTerms.includes(searchTerm);
+        
+        if (isExactServiceQuery) {
+          // Только проверяем услуги для точных запросов
+          return master.services.some(service => 
+            service.toLowerCase().includes(searchTerm) || 
+            service.toLowerCase() === searchTerm
+          );
+        }
+        
+        // Для общих запросов проверяем все поля
         const hasService = master.services.some(service => 
           service.toLowerCase().includes(searchTerm) || 
           service.toLowerCase() === searchTerm
         );
         
-        
         if (hasService) {
           return true;
         }
         
-        // Затем проверяем специализацию
+        // Проверяем специализацию
         if (master.specialization.toLowerCase() === searchTerm) {
           return true;
         }
