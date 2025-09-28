@@ -104,6 +104,9 @@ function SearchContent() {
     addBooking(booking);
     setShowBookingModal(false);
     
+    console.log('Booking created:', booking);
+    console.log('Redirecting to payment page with bookingId:', booking.id);
+    
     // Redirect to payment page
     window.location.href = `/payment?bookingId=${booking.id}`;
   };
@@ -274,12 +277,12 @@ function SearchContent() {
       {/* Booking Modal */}
       {showBookingModal && selectedMaster && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto border border-white/20">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Запис до {selectedMaster.name}</h2>
+              <h2 className="text-2xl font-bold text-white">Запис до {selectedMaster.name}</h2>
               <button
                 onClick={() => setShowBookingModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-white/60 hover:text-white"
               >
                 ✕
               </button>
@@ -288,7 +291,7 @@ function SearchContent() {
             {/* Date Selection */}
             {!searchDate && (
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Оберіть дату</h3>
+                <h3 className="text-lg font-semibold text-white mb-4">Оберіть дату</h3>
                 <div className="grid grid-cols-7 gap-2">
                   {getCalendarDates().map((date, index) => (
                     <button
@@ -297,7 +300,7 @@ function SearchContent() {
                       className={`p-2 text-sm rounded-lg border ${
                         selectedDate === formatDate(date)
                           ? 'bg-purple-600 text-white border-purple-600'
-                          : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                          : 'bg-white/20 text-white border-white/30 hover:bg-white/30'
                       }`}
                     >
                       {date.getDate()}
@@ -310,7 +313,7 @@ function SearchContent() {
             {/* Time Selection */}
             {!searchTime && (
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Оберіть час</h3>
+                <h3 className="text-lg font-semibold text-white mb-4">Оберіть час</h3>
                 <div className="grid grid-cols-4 gap-2">
                   {timeSlots.map((time) => (
                     <button
@@ -320,7 +323,7 @@ function SearchContent() {
                       className={`p-3 text-sm rounded-lg border ${
                         selectedTime === time
                           ? 'bg-purple-600 text-white border-purple-600'
-                          : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                          : 'bg-white/20 text-white border-white/30 hover:bg-white/30'
                       } ${selectedDate && isBooked(selectedDate, time) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {time}
@@ -332,33 +335,33 @@ function SearchContent() {
 
             {/* Service Selection */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Оберіть послуги</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Оберіть послуги</h3>
               <div className="space-y-2">
                 {selectedMaster.services.map((service, index) => (
-                  <label key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                  <label key={index} className="flex items-center space-x-3 p-3 bg-white/10 rounded-lg">
                     <input
                       type="checkbox"
                       checked={selectedServices.includes(service)}
                       onChange={() => handleServiceToggle(service)}
-                      className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                      className="w-4 h-4 text-purple-600 border-white/30 rounded focus:ring-purple-500"
                     />
-                    <span className="text-gray-700">{service}</span>
+                    <span className="text-white">{service}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             {/* Master Info */}
-            <div className="bg-purple-50 rounded-lg p-4 mb-6">
-              <h4 className="font-semibold text-purple-900 mb-2">Інформація про майстра</h4>
-              <p className="text-gray-700">📍 {selectedMaster.address}</p>
-              <p className="text-gray-700">📞 {selectedMaster.phone}</p>
+            <div className="bg-purple-500/20 rounded-lg p-4 mb-6">
+              <h4 className="font-semibold text-white mb-2">Інформація про майстра</h4>
+              <p className="text-white/80">📍 {selectedMaster.address}</p>
+              <p className="text-white/80">📞 {selectedMaster.phone}</p>
             </div>
 
             {/* Total Price */}
             <div className="flex items-center justify-between mb-6">
-              <span className="text-lg font-semibold text-gray-900">Загальна вартість:</span>
-              <span className="text-2xl font-bold text-purple-600">{calculateTotalPrice()} грн</span>
+              <span className="text-lg font-semibold text-white">Загальна вартість:</span>
+              <span className="text-2xl font-bold text-yellow-400">{calculateTotalPrice()} грн</span>
             </div>
 
             {/* Confirm Button */}
@@ -370,7 +373,7 @@ function SearchContent() {
               Підтвердити запис
             </button>
             
-            <p className="text-yellow-600 text-sm mt-2">✨ После подтверждения вы будете перенаправлены на страницу оплаты</p>
+            <p className="text-white/70 text-sm mt-2">✨ После подтверждения вы будете перенаправлены на страницу оплаты</p>
           </div>
         </div>
       )}

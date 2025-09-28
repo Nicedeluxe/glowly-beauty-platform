@@ -37,13 +37,19 @@ export default function PaymentPage() {
 
   useEffect(() => {
     const bookingId = searchParams.get('bookingId');
+    console.log('Payment page - bookingId:', bookingId);
+    
     if (!bookingId) {
+      console.log('No bookingId found, redirecting to home');
       router.push('/');
       return;
     }
 
     const booking = getBookingById(bookingId);
+    console.log('Payment page - booking:', booking);
+    
     if (!booking) {
+      console.log('No booking found, redirecting to home');
       router.push('/');
       return;
     }
