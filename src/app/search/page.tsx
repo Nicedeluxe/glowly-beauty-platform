@@ -79,10 +79,13 @@ function SearchContent() {
     setSelectedMaster(master);
     setSelectedServices([]);
     setShowBookingModal(true);
+    
+    // Сброс всех состояний
+    setSelectedDate(searchDate || '');
+    setSelectedTime(searchTime || '');
+    
     // Если дата и время уже выбраны при поиске, пропускаем эти шаги
     if (searchDate && searchTime) {
-      setSelectedDate(searchDate);
-      setSelectedTime(searchTime);
       setBookingStep('services');
     } else {
       setBookingStep('date');
@@ -294,6 +297,8 @@ function SearchContent() {
                   setShowBookingModal(false);
                   setBookingStep('date');
                   setSelectedServices([]);
+                  setSelectedDate(searchDate || '');
+                  setSelectedTime(searchTime || '');
                 }}
                 className="text-white/60 hover:text-white"
               >
@@ -316,6 +321,11 @@ function SearchContent() {
                   </div>
                 ))}
               </div>
+            </div>
+            
+            {/* Debug info */}
+            <div className="text-xs text-white/50 mb-4 text-center">
+              Debug: Step={bookingStep}, Date={selectedDate}, Time={selectedTime}, Services={selectedServices.length}
             </div>
 
             {/* Step 1: Date Selection */}
