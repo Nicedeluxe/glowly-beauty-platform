@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Link from 'next/link';
+import PeriodSelector from '../../components/PeriodSelector';
 
 interface VerificationRequest {
   id: string;
@@ -64,7 +65,8 @@ export default function AdminPage() {
   const [notes, setNotes] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [activeTab, setActiveTab] = useState<'verification' | 'masters' | 'analytics' | 'earnings'>('verification');
-  const [earningsPeriod, setEarningsPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
+  const [selectedStartDate, setSelectedStartDate] = useState('');
+  const [selectedEndDate, setSelectedEndDate] = useState('');
 
   // Проверяем права администратора (в реальном приложении это должно быть на сервере)
   const isAdmin = user?.email === 'admin@glowly.com' || user?.name === 'Admin';
@@ -124,6 +126,43 @@ export default function AdminPage() {
       case 'approved': return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'rejected': return 'bg-red-500/20 text-red-400 border-red-500/30';
     }
+  };
+
+  const handleDateRangeChange = (startDate: string, endDate: string) => {
+    setSelectedStartDate(startDate);
+    setSelectedEndDate(endDate);
+  };
+
+  const getPeriodDays = () => {
+    if (!selectedStartDate || !selectedEndDate) return 30; // Default to 30 days
+    
+    const start = new Date(selectedStartDate);
+    const end = new Date(selectedEndDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    
+    return diffDays;
+  };
+
+  const getEarningsForPeriod = () => {
+    const days = getPeriodDays();
+    const baseDailyEarnings = 1200; // Base daily earnings
+    const totalEarnings = baseDailyEarnings * days;
+    const platformCommission = Math.round(totalEarnings * 0.1);
+    const mastersEarnings = totalEarnings - platformCommission;
+
+    return {
+      total: totalEarnings,
+      commission: platformCommission,
+      masters: mastersEarnings,
+      days
+    };
+  };
+
+  const getMasterEarningsForPeriod = (baseEarnings: number) => {
+    const days = getPeriodDays();
+    const multiplier = days / 30; // Adjust based on selected period
+    return Math.round(baseEarnings * multiplier);
   };
 
   return (
@@ -529,75 +568,44 @@ export default function AdminPage() {
               <h2 className="text-2xl font-bold text-white text-center mb-6">Заробіток майстрів</h2>
               
               {/* Period Selector */}
-              <div className="flex flex-wrap justify-center gap-2 mb-6">
-                <button
-                  onClick={() => setEarningsPeriod('week')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    earningsPeriod === 'week'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  Тиждень
-                </button>
-                <button
-                  onClick={() => setEarningsPeriod('month')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    earningsPeriod === 'month'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  Місяць
-                </button>
-                <button
-                  onClick={() => setEarningsPeriod('quarter')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    earningsPeriod === 'quarter'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  Квартал
-                </button>
-                <button
-                  onClick={() => setEarningsPeriod('year')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    earningsPeriod === 'year'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  Рік
-                </button>
+              <div className="max-w-md mx-auto mb-6">
+                <PeriodSelector
+                  selectedStartDate={selectedStartDate}
+                  selectedEndDate={selectedEndDate}
+                  onDateRangeChange={handleDateRangeChange}
+                />
               </div>
 
               {/* Period Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-green-400">
-                    {earningsPeriod === 'week' ? '₴8,450' : 
-                     earningsPeriod === 'month' ? '₴34,200' : 
-                     earningsPeriod === 'quarter' ? '₴98,500' : '₴420,000'}
-                  </div>
-                  <div className="text-green-300 text-sm">Загальний заробіток</div>
-                </div>
-                <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-blue-400">
-                    {earningsPeriod === 'week' ? '₴845' : 
-                     earningsPeriod === 'month' ? '₴3,420' : 
-                     earningsPeriod === 'quarter' ? '₴9,850' : '₴42,000'}
-                  </div>
-                  <div className="text-blue-300 text-sm">Комісія платформи</div>
-                </div>
-                <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-purple-400">
-                    {earningsPeriod === 'week' ? '₴7,605' : 
-                     earningsPeriod === 'month' ? '₴30,780' : 
-                     earningsPeriod === 'quarter' ? '₴88,650' : '₴378,000'}
-                  </div>
-                  <div className="text-purple-300 text-sm">Заробіток майстрів</div>
-                </div>
+                {(() => {
+                  const earnings = getEarningsForPeriod();
+                  return (
+                    <>
+                      <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-green-400">
+                          ₴{earnings.total.toLocaleString()}
+                        </div>
+                        <div className="text-green-300 text-sm">Загальний заробіток</div>
+                        <div className="text-green-200 text-xs mt-1">за {earnings.days} днів</div>
+                      </div>
+                      <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-blue-400">
+                          ₴{earnings.commission.toLocaleString()}
+                        </div>
+                        <div className="text-blue-300 text-sm">Комісія платформи</div>
+                        <div className="text-blue-200 text-xs mt-1">10% від загального доходу</div>
+                      </div>
+                      <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-purple-400">
+                          ₴{earnings.masters.toLocaleString()}
+                        </div>
+                        <div className="text-purple-300 text-sm">Заробіток майстрів</div>
+                        <div className="text-purple-200 text-xs mt-1">90% від загального доходу</div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
 
               {/* Masters Earnings Ranking */}
@@ -622,14 +630,10 @@ export default function AdminPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-green-400">
-                        {earningsPeriod === 'week' ? '₴2,340' : 
-                         earningsPeriod === 'month' ? '₴9,800' : 
-                         earningsPeriod === 'quarter' ? '₴28,500' : '₴125,000'}
+                        ₴{getMasterEarningsForPeriod(9800).toLocaleString()}
                       </div>
                       <div className="text-white/60 text-sm">
-                        {earningsPeriod === 'week' ? '45 замовлень' : 
-                         earningsPeriod === 'month' ? '187 замовлень' : 
-                         earningsPeriod === 'quarter' ? '542 замовлення' : '2,340 замовлень'}
+                        {Math.round(getMasterEarningsForPeriod(9800) / 52)} замовлень
                       </div>
                     </div>
                   </div>
@@ -652,14 +656,10 @@ export default function AdminPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-green-400">
-                        {earningsPeriod === 'week' ? '₴1,890' : 
-                         earningsPeriod === 'month' ? '₴7,600' : 
-                         earningsPeriod === 'quarter' ? '₴22,800' : '₴98,000'}
+                        ₴{getMasterEarningsForPeriod(7600).toLocaleString()}
                       </div>
                       <div className="text-white/60 text-sm">
-                        {earningsPeriod === 'week' ? '32 замовлення' : 
-                         earningsPeriod === 'month' ? '128 замовлень' : 
-                         earningsPeriod === 'quarter' ? '384 замовлення' : '1,680 замовлень'}
+                        {Math.round(getMasterEarningsForPeriod(7600) / 59)} замовлень
                       </div>
                     </div>
                   </div>
@@ -682,14 +682,10 @@ export default function AdminPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-green-400">
-                        {earningsPeriod === 'week' ? '₴1,650' : 
-                         earningsPeriod === 'month' ? '₴6,400' : 
-                         earningsPeriod === 'quarter' ? '₴19,200' : '₴82,000'}
+                        ₴{getMasterEarningsForPeriod(6400).toLocaleString()}
                       </div>
                       <div className="text-white/60 text-sm">
-                        {earningsPeriod === 'week' ? '28 замовлень' : 
-                         earningsPeriod === 'month' ? '112 замовлень' : 
-                         earningsPeriod === 'quarter' ? '336 замовлень' : '1,440 замовлень'}
+                        {Math.round(getMasterEarningsForPeriod(6400) / 57)} замовлень
                       </div>
                     </div>
                   </div>
@@ -712,14 +708,10 @@ export default function AdminPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-green-400">
-                        {earningsPeriod === 'week' ? '₴1,420' : 
-                         earningsPeriod === 'month' ? '₴5,600' : 
-                         earningsPeriod === 'quarter' ? '₴16,800' : '₴72,000'}
+                        ₴{getMasterEarningsForPeriod(5600).toLocaleString()}
                       </div>
                       <div className="text-white/60 text-sm">
-                        {earningsPeriod === 'week' ? '24 замовлення' : 
-                         earningsPeriod === 'month' ? '96 замовлень' : 
-                         earningsPeriod === 'quarter' ? '288 замовлень' : '1,200 замовлень'}
+                        {Math.round(getMasterEarningsForPeriod(5600) / 58)} замовлень
                       </div>
                     </div>
                   </div>
@@ -742,14 +734,10 @@ export default function AdminPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-green-400">
-                        {earningsPeriod === 'week' ? '₴1,150' : 
-                         earningsPeriod === 'month' ? '₴4,800' : 
-                         earningsPeriod === 'quarter' ? '₴14,400' : '₴61,000'}
+                        ₴{getMasterEarningsForPeriod(4800).toLocaleString()}
                       </div>
                       <div className="text-white/60 text-sm">
-                        {earningsPeriod === 'week' ? '18 замовлень' : 
-                         earningsPeriod === 'month' ? '72 замовлення' : 
-                         earningsPeriod === 'quarter' ? '216 замовлень' : '920 замовлень'}
+                        {Math.round(getMasterEarningsForPeriod(4800) / 67)} замовлень
                       </div>
                     </div>
                   </div>
