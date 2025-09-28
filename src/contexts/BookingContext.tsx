@@ -153,7 +153,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       const profile = getMasterProfile(master.id);
       const dynamicServices = profile?.services || [];
       
-      // Priority: 1) Dynamic services from profile, 2) Static services from MOCK_MASTERS, 3) Default services
+      // Priority: 1) Dynamic services from profile, 2) Static services from MOCK_MASTERS
       let services: string[];
       
       if (dynamicServices.length > 0) {
@@ -163,8 +163,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         // Use static services from MOCK_MASTERS
         services = master.services;
       } else {
-        // Use default services based on specialization
-        services = getDefaultServicesForMaster(master.specialization);
+        // No services available - empty array
+        services = [];
       }
       
       return {
@@ -174,17 +174,6 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  // Helper function to get default services based on specialization
-  const getDefaultServicesForMaster = (specialization: string) => {
-    const defaultServices: { [key: string]: string[] } = {
-      'Манікюр': ['Класичний манікюр', 'Гель-лак', 'Френч', 'Нейл-арт'],
-      'Брови': ['Корекція бровей', 'Фарбування бровей', 'Ламінування бровей', 'Татуаж бровей'],
-      'Вії': ['Нарощування вій', 'Ламінування вій', 'Догляд за віями', 'Фарбування вій'],
-      'Педикюр': ['Класичний педикюр', 'Апаратний педикюр', 'Парафінотерапія', 'Догляд за нігтями']
-    };
-    
-    return defaultServices[specialization] || [];
-  };
 
   const getMasterProfile = (masterId: string) => {
     return masterProfiles.find(profile => profile.id === masterId);

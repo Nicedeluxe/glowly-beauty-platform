@@ -420,7 +420,7 @@ function SearchContent() {
           
           // Debug logging for testing
           if (searchTerm === 'манікюр') {
-            console.log(`Master: ${master.name}, Services: [${master.services.join(', ')}], HasService: ${hasService}`);
+            console.log(`Master: ${master.name}, Specialization: ${master.specialization}, Services: [${master.services.join(', ')}], HasService: ${hasService}`);
           }
           
           return hasService;
