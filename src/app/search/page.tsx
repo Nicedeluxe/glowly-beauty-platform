@@ -408,18 +408,27 @@ function SearchContent() {
       const searchTerm = query.toLowerCase().trim();
       const mastersWithDynamicServices = getMastersWithDynamicServices();
       let filtered = mastersWithDynamicServices.filter(master => {
-        // Точное совпадение по специализации
+        // Сначала проверяем услуги - это приоритет для точного поиска
+        const hasService = master.services.some(service => 
+          service.toLowerCase().includes(searchTerm) || 
+          service.toLowerCase() === searchTerm
+        );
+        
+        // Debug logging
+        if (searchTerm === 'манікюр') {
+          console.log(`Master: ${master.name}, Services: ${master.services.join(', ')}, HasService: ${hasService}`);
+        }
+        
+        if (hasService) {
+          return true;
+        }
+        
+        // Затем проверяем специализацию
         if (master.specialization.toLowerCase() === searchTerm) {
           return true;
         }
         
-        // Частичное совпадение по специализации
         if (master.specialization.toLowerCase().includes(searchTerm)) {
-          return true;
-        }
-        
-        // Поиск по услугам
-        if (master.services.some(service => service.toLowerCase().includes(searchTerm))) {
           return true;
         }
         
