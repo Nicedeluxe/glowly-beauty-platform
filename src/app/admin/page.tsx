@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -211,7 +211,7 @@ export default function AdminPage() {
             {['all', 'pending', 'approved', 'rejected'].map((status) => (
               <button
                 key={status}
-                onClick={() => setFilterStatus(status as any)}
+                onClick={() => setFilterStatus(status as 'all' | 'pending' | 'approved' | 'rejected')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   filterStatus === status
                     ? 'bg-purple-600 text-white'

@@ -63,8 +63,12 @@ export default function AuthPage() {
   };
 
   const handleTestLogin = async (email: string, password: string, type: 'CLIENT' | 'MASTER') => {
-    setFormData({ email, password, userType: type });
-    await handleSubmit(new Event('submit') as any);
+    setFormData({ name: '', email, password, userType: type });
+    const mockEvent = {
+      preventDefault: () => {},
+      currentTarget: {} as HTMLFormElement
+    } as React.FormEvent<HTMLFormElement>;
+    await handleSubmit(mockEvent);
   };
 
   return (

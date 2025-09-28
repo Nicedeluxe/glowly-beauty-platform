@@ -42,7 +42,7 @@ export default function Dashboard() {
       service: booking.services.join(', '),
       date: booking.date,
       time: booking.time,
-      status: booking.status === 'confirmed' ? 'upcoming' : booking.status === 'cancelled' ? 'cancelled' : 'completed',
+      status: (booking.status === 'confirmed' ? 'upcoming' : booking.status === 'cancelled' ? 'cancelled' : 'completed') as 'upcoming' | 'cancelled' | 'completed',
       price: booking.totalPrice,
       masterPhone: booking.masterPhone
     }))

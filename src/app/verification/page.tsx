@@ -33,7 +33,7 @@ export default function VerificationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Перенаправляем если не мастер
-  if (!user || user.userType !== 'MASTER') {
+  if (!user || user.type !== 'MASTER') {
     router.push('/');
     return null;
   }
@@ -337,7 +337,7 @@ export default function VerificationPage() {
           {/* Info */}
           <div className="mt-6 text-center">
             <p className="text-purple-200 text-sm">
-              <span className="text-red-400">*</span> - обов'язкові поля
+              <span className="text-red-400">*</span> - обов&apos;язкові поля
             </p>
             <p className="text-purple-200 text-xs mt-2">
               Перевірка документів займає 1-3 робочих дні. Ви отримаєте повідомлення про результат.
