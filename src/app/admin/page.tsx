@@ -83,6 +83,7 @@ export default function AdminPage() {
   const [selectedRequest, setSelectedRequest] = useState<VerificationRequest | null>(null);
   const [notes, setNotes] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [activeTab, setActiveTab] = useState<'verification' | 'masters' | 'analytics'>('verification');
 
   // Проверяем права администратора (в реальном приложении это должно быть на сервере)
   const isAdmin = user?.email === 'admin@glowly.com' || user?.name === 'Admin';
@@ -204,7 +205,7 @@ export default function AdminPage() {
               Панель адміністратора
             </h1>
             <p className="text-purple-200 text-lg">
-              Верифікація майстрів та управління платформою
+              Управління платформою Glowly
             </p>
             {/* Debug info */}
             <div className="mt-4 p-4 bg-black/20 rounded-lg">
@@ -212,8 +213,45 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          {/* Navigation Tabs */}
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            <button
+              onClick={() => setActiveTab('verification')}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                activeTab === 'verification'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              📋 Верифікація
+            </button>
+            <button
+              onClick={() => setActiveTab('masters')}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                activeTab === 'masters'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              👥 Майстри
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                activeTab === 'analytics'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              📊 Аналітика
+            </button>
+          </div>
+
+          {/* Verification Tab */}
+          {activeTab === 'verification' && (
+            <>
+              {/* Stats */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-yellow-400">
                 {requests.filter(r => r.status === 'pending').length}
@@ -426,6 +464,234 @@ export default function AdminPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+            </>
+          )}
+
+          {/* Masters Management Tab */}
+          {activeTab === 'masters' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white text-center mb-6">Управління майстрами</h2>
+              
+              {/* Masters Stats */}
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-blue-400">20</div>
+                  <div className="text-blue-300 text-sm">Всього майстрів</div>
+                </div>
+                <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-green-400">15</div>
+                  <div className="text-green-300 text-sm">Верифікованих</div>
+                </div>
+                <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-yellow-400">3</div>
+                  <div className="text-yellow-300 text-sm">На верифікації</div>
+                </div>
+                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-red-400">2</div>
+                  <div className="text-red-300 text-sm">Заблокованих</div>
+                </div>
+              </div>
+
+              {/* Masters List */}
+              <div className="bg-white/5 rounded-lg p-6">
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm">Всі</button>
+                  <button className="px-4 py-2 bg-white/10 text-white/80 rounded-lg text-sm hover:bg-white/20">Верифіковані</button>
+                  <button className="px-4 py-2 bg-white/10 text-white/80 rounded-lg text-sm hover:bg-white/20">Не верифіковані</button>
+                  <button className="px-4 py-2 bg-white/10 text-white/80 rounded-lg text-sm hover:bg-white/20">Заблоковані</button>
+                </div>
+                
+                <div className="space-y-4">
+                  {/* Master Item 1 */}
+                  <div className="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        М
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Марія Петренко</h3>
+                        <p className="text-white/70 text-sm">maria@example.com</p>
+                        <p className="text-white/50 text-xs">Верифікований • Майстер нігтів</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm border border-green-500/30">
+                        Активний
+                      </span>
+                      <button className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700">
+                        Управління
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Master Item 2 */}
+                  <div className="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        А
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Анна Красива</h3>
+                        <p className="text-white/70 text-sm">anna@example.com</p>
+                        <p className="text-white/50 text-xs">На верифікації • Візажист</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm border border-yellow-500/30">
+                        На верифікації
+                      </span>
+                      <button className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700">
+                        Управління
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Master Item 3 */}
+                  <div className="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        Т
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Тетяна Манікюр</h3>
+                        <p className="text-white/70 text-sm">tetiana@example.com</p>
+                        <p className="text-white/50 text-xs">Верифікований • Майстер нігтів</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm border border-green-500/30">
+                        Активний
+                      </span>
+                      <button className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700">
+                        Управління
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Analytics Tab */}
+          {activeTab === 'analytics' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white text-center mb-6">Фінансова аналітика</h2>
+              
+              {/* Financial Stats */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-green-400">₴45,680</div>
+                  <div className="text-green-300 text-sm">Загальний дохід</div>
+                  <div className="text-green-200 text-xs mt-1">+12% за місяць</div>
+                </div>
+                <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-blue-400">₴4,568</div>
+                  <div className="text-blue-300 text-sm">Комісія платформи</div>
+                  <div className="text-blue-200 text-xs mt-1">10% від загального доходу</div>
+                </div>
+                <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-purple-400">₴41,112</div>
+                  <div className="text-purple-300 text-sm">Дохід майстрів</div>
+                  <div className="text-purple-200 text-xs mt-1">90% від загального доходу</div>
+                </div>
+              </div>
+
+              {/* Charts Placeholder */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white/5 rounded-lg p-6">
+                  <h3 className="text-xl font-semibold text-white mb-4">Дохід по місяцях</h3>
+                  <div className="h-64 bg-gray-800 rounded-lg flex items-center justify-center">
+                    <div className="text-gray-400 text-center">
+                      <div className="text-4xl mb-2">📈</div>
+                      <div>Графік доходу</div>
+                      <div className="text-sm">(Інтеграція з Chart.js)</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white/5 rounded-lg p-6">
+                  <h3 className="text-xl font-semibold text-white mb-4">Популярні послуги</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-white">Манікюр</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-32 bg-gray-700 rounded-full h-2">
+                          <div className="bg-purple-600 h-2 rounded-full" style={{width: '75%'}}></div>
+                        </div>
+                        <span className="text-white/70 text-sm">75%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white">Візаж</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-32 bg-gray-700 rounded-full h-2">
+                          <div className="bg-purple-600 h-2 rounded-full" style={{width: '60%'}}></div>
+                        </div>
+                        <span className="text-white/70 text-sm">60%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white">Брови</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-32 bg-gray-700 rounded-full h-2">
+                          <div className="bg-purple-600 h-2 rounded-full" style={{width: '45%'}}></div>
+                        </div>
+                        <span className="text-white/70 text-sm">45%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white">Вії</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-32 bg-gray-700 rounded-full h-2">
+                          <div className="bg-purple-600 h-2 rounded-full" style={{width: '30%'}}></div>
+                        </div>
+                        <span className="text-white/70 text-sm">30%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recent Transactions */}
+              <div className="bg-white/5 rounded-lg p-6">
+                <h3 className="text-xl font-semibold text-white mb-4">Останні транзакції</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b border-white/10">
+                    <div>
+                      <div className="text-white font-medium">Манікюр - Марія Петренко</div>
+                      <div className="text-white/60 text-sm">15.01.2024, 14:30</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-green-400 font-medium">+₴450</div>
+                      <div className="text-white/60 text-sm">Комісія: ₴45</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-white/10">
+                    <div>
+                      <div className="text-white font-medium">Візаж - Анна Красива</div>
+                      <div className="text-white/60 text-sm">15.01.2024, 12:15</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-green-400 font-medium">+₴800</div>
+                      <div className="text-white/60 text-sm">Комісія: ₴80</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-white/10">
+                    <div>
+                      <div className="text-white font-medium">Брови - Тетяна Манікюр</div>
+                      <div className="text-white/60 text-sm">15.01.2024, 10:45</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-green-400 font-medium">+₴300</div>
+                      <div className="text-white/60 text-sm">Комісія: ₴30</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
