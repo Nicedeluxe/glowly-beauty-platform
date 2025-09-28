@@ -414,9 +414,16 @@ function SearchContent() {
       let filtered = mastersWithDynamicServices.filter(master => {
         if (isServiceSearch) {
           // Строгий поиск по услугам - только мастера с конкретной услугой
-          return master.services.some(service => 
+          const hasService = master.services.some(service => 
             service.toLowerCase().includes(searchTerm)
           );
+          
+          // Debug logging for testing
+          if (searchTerm === 'манікюр') {
+            console.log(`Master: ${master.name}, Services: [${master.services.join(', ')}], HasService: ${hasService}`);
+          }
+          
+          return hasService;
         } else {
           // Общий поиск - проверяем все поля
           return (
