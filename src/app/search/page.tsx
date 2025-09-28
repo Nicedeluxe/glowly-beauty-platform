@@ -23,6 +23,7 @@ function SearchContent() {
   const [selectedDate, setSelectedDate] = useState(searchDate);
   const [selectedTime, setSelectedTime] = useState(searchTime);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [bookingStep, setBookingStep] = useState<'date' | 'time' | 'services' | 'confirm'>('date');
 
   // Mock data for time slots
   const timeSlots = [
@@ -76,8 +77,16 @@ function SearchContent() {
 
   const handleBookAppointment = (master: MasterWithServices) => {
     setSelectedMaster(master);
-    setSelectedServices(master.services.slice(0, 1)); // Select first service by default
+    setSelectedServices([]);
     setShowBookingModal(true);
+    // Если дата и время уже выбраны при поиске, пропускаем эти шаги
+    if (searchDate && searchTime) {
+      setSelectedDate(searchDate);
+      setSelectedTime(searchTime);
+      setBookingStep('services');
+    } else {
+      setBookingStep('date');
+    }
   };
 
   const handleConfirmBooking = () => {
@@ -281,22 +290,46 @@ function SearchContent() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">Запис до {selectedMaster.name}</h2>
               <button
-                onClick={() => setShowBookingModal(false)}
+                onClick={() => {
+                  setShowBookingModal(false);
+                  setBookingStep('date');
+                  setSelectedServices([]);
+                }}
                 className="text-white/60 hover:text-white"
               >
                 ✕
               </button>
             </div>
 
-            {/* Date Selection */}
-            {!searchDate && (
+            {/* Progress Steps */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center space-x-2">
+                {['date', 'time', 'services', 'confirm'].map((step, index) => (
+                  <div key={step} className="flex items-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                      bookingStep === step ? 'bg-purple-600 text-white' : 
+                      ['date', 'time', 'services', 'confirm'].indexOf(bookingStep) > index ? 'bg-green-500 text-white' : 'bg-white/20 text-white/60'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    {index < 3 && <div className="w-4 h-0.5 bg-white/30 mx-1" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 1: Date Selection */}
+            {bookingStep === 'date' && !searchDate && (
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Оберіть дату</h3>
                 <div className="grid grid-cols-7 gap-2">
                   {getCalendarDates().map((date, index) => (
                     <button
                       key={index}
-                      onClick={() => setSelectedDate(formatDate(date))}
+                      onClick={() => {
+                        setSelectedDate(formatDate(date));
+                        setBookingStep('time');
+                      }}
                       className={`p-2 text-sm rounded-lg border ${
                         selectedDate === formatDate(date)
                           ? 'bg-purple-600 text-white border-purple-600'
@@ -310,15 +343,26 @@ function SearchContent() {
               </div>
             )}
 
-            {/* Time Selection */}
-            {!searchTime && (
+            {/* Step 2: Time Selection */}
+            {bookingStep === 'time' && !searchTime && (
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Оберіть час</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">Оберіть час</h3>
+                  <button
+                    onClick={() => setBookingStep('date')}
+                    className="text-white/60 hover:text-white text-sm"
+                  >
+                    ← Назад
+                  </button>
+                </div>
                 <div className="grid grid-cols-4 gap-2">
                   {timeSlots.map((time) => (
                     <button
                       key={time}
-                      onClick={() => setSelectedTime(time)}
+                      onClick={() => {
+                        setSelectedTime(time);
+                        setBookingStep('services');
+                      }}
                       disabled={selectedDate ? isBooked(selectedDate, time) : false}
                       className={`p-3 text-sm rounded-lg border ${
                         selectedTime === time
@@ -333,47 +377,92 @@ function SearchContent() {
               </div>
             )}
 
-            {/* Service Selection */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Оберіть послуги</h3>
-              <div className="space-y-2">
-                {selectedMaster.services.map((service, index) => (
-                  <label key={index} className="flex items-center space-x-3 p-3 bg-white/10 rounded-lg">
-                    <input
-                      type="checkbox"
-                      checked={selectedServices.includes(service)}
-                      onChange={() => handleServiceToggle(service)}
-                      className="w-4 h-4 text-purple-600 border-white/30 rounded focus:ring-purple-500"
-                    />
-                    <span className="text-white">{service}</span>
-                  </label>
-                ))}
+            {/* Step 3: Service Selection */}
+            {bookingStep === 'services' && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">Оберіть послуги</h3>
+                  <button
+                    onClick={() => setBookingStep('time')}
+                    className="text-white/60 hover:text-white text-sm"
+                  >
+                    ← Назад
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {selectedMaster.services.map((service, index) => (
+                    <label key={index} className="flex items-center space-x-3 p-3 bg-white/10 rounded-lg">
+                      <input
+                        type="checkbox"
+                        checked={selectedServices.includes(service)}
+                        onChange={() => handleServiceToggle(service)}
+                        className="w-4 h-4 text-purple-600 border-white/30 rounded focus:ring-purple-500"
+                      />
+                      <span className="text-white">{service}</span>
+                    </label>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setBookingStep('confirm')}
+                  disabled={selectedServices.length === 0}
+                  className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-4"
+                >
+                  Продовжити
+                </button>
               </div>
-            </div>
+            )}
 
-            {/* Master Info */}
-            <div className="bg-purple-500/20 rounded-lg p-4 mb-6">
-              <h4 className="font-semibold text-white mb-2">Інформація про майстра</h4>
-              <p className="text-white/80">📍 {selectedMaster.address}</p>
-              <p className="text-white/80">📞 {selectedMaster.phone}</p>
-            </div>
+            {/* Step 4: Confirmation */}
+            {bookingStep === 'confirm' && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">Підтвердження</h3>
+                  <button
+                    onClick={() => setBookingStep('services')}
+                    className="text-white/60 hover:text-white text-sm"
+                  >
+                    ← Назад
+                  </button>
+                </div>
 
-            {/* Total Price */}
-            <div className="flex items-center justify-between mb-6">
-              <span className="text-lg font-semibold text-white">Загальна вартість:</span>
-              <span className="text-2xl font-bold text-white">{calculateTotalPrice()} грн</span>
-            </div>
+                {/* Master Info */}
+                <div className="bg-purple-500/20 rounded-lg p-4 mb-6">
+                  <h4 className="font-semibold text-white mb-2">Інформація про майстра</h4>
+                  <p className="text-white/80">📍 {selectedMaster.address}</p>
+                  <p className="text-white/80">📞 {selectedMaster.phone}</p>
+                </div>
 
-            {/* Confirm Button */}
-            <button
-              onClick={handleConfirmBooking}
-              disabled={!selectedDate || !selectedTime || selectedServices.length === 0}
-              className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Підтвердити запис
-            </button>
-            
-            <p className="text-white/70 text-sm mt-2">✨ Після підтвердження ви будете перенаправлені на сторінку оплати</p>
+                {/* Selected Services */}
+                <div className="mb-4">
+                  <h4 className="font-semibold text-white mb-2">Вибрані послуги:</h4>
+                  {selectedServices.map((service, index) => (
+                    <p key={index} className="text-white/80">• {service}</p>
+                  ))}
+                </div>
+
+                {/* Date and Time */}
+                <div className="mb-4">
+                  <p className="text-white/80">📅 Дата: {selectedDate}</p>
+                  <p className="text-white/80">⏰ Час: {selectedTime}</p>
+                </div>
+
+                {/* Total Price */}
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-lg font-semibold text-white">Загальна вартість:</span>
+                  <span className="text-2xl font-bold !text-white">{calculateTotalPrice()} грн</span>
+                </div>
+
+                {/* Confirm Button */}
+                <button
+                  onClick={handleConfirmBooking}
+                  className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                >
+                  Підтвердити запис
+                </button>
+                
+                <p className="text-white/70 text-sm mt-2">✨ Після підтвердження ви будете перенаправлені на сторінку оплати</p>
+              </div>
+            )}
           </div>
         </div>
       )}
