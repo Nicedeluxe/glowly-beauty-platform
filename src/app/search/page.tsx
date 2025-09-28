@@ -361,7 +361,7 @@ function SearchContent() {
             {/* Total Price */}
             <div className="flex items-center justify-between mb-6">
               <span className="text-lg font-semibold text-white">Загальна вартість:</span>
-              <span className="text-2xl font-bold text-yellow-400">{calculateTotalPrice()} грн</span>
+              <span className="text-2xl font-bold text-white">{calculateTotalPrice()} грн</span>
             </div>
 
             {/* Confirm Button */}
@@ -373,7 +373,7 @@ function SearchContent() {
               Підтвердити запис
             </button>
             
-            <p className="text-white/70 text-sm mt-2">✨ После подтверждения вы будете перенаправлены на страницу оплаты</p>
+            <p className="text-white/70 text-sm mt-2">✨ Після підтвердження ви будете перенаправлені на сторінку оплати</p>
           </div>
         </div>
       )}
