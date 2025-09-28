@@ -13,11 +13,12 @@ export interface Booking {
   masterPhone: string;
   clientId: string;
   clientName: string;
+  clientPhone: string;
   date: string;
   time: string;
   services: string[];
   totalPrice: number;
-  status: 'confirmed' | 'cancelled';
+  status: 'confirmed' | 'cancelled' | 'completed' | 'paid';
   createdAt: string;
 }
 
@@ -316,6 +317,16 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     ));
   };
 
+  const updateBookingStatus = (bookingId: string, status: 'confirmed' | 'cancelled' | 'completed' | 'paid') => {
+    setBookings(prev => prev.map(booking => 
+      booking.id === bookingId ? { ...booking, status } : booking
+    ));
+  };
+
+  const getBookingById = (bookingId: string) => {
+    return bookings.find(booking => booking.id === bookingId);
+  };
+
   const value = {
     bookings,
     masterProfiles,
@@ -333,6 +344,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     removeMasterService,
     rescheduleBooking,
     refundBooking,
+    updateBookingStatus,
+    getBookingById,
   };
 
   return (
