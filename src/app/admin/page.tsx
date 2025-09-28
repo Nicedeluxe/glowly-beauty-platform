@@ -86,10 +86,34 @@ export default function AdminPage() {
 
   // Проверяем права администратора (в реальном приложении это должно быть на сервере)
   const isAdmin = user?.email === 'admin@glowly.com' || user?.name === 'Admin';
+  
+  // Отладочная информация
+  console.log('Admin page - user:', user);
+  console.log('Admin page - isAdmin:', isAdmin);
+  console.log('Admin page - user?.email:', user?.email);
+  console.log('Admin page - user?.name:', user?.name);
 
-  if (!user || !isAdmin) {
-    router.push('/');
-    return null;
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex items-center justify-center">
+        <div className="text-white text-xl">Завантаження...</div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">🚫</div>
+          <h1 className="text-2xl font-bold text-white mb-4">Доступ заборонено</h1>
+          <p className="text-purple-200 mb-6">У вас немає прав доступу до цієї сторінки</p>
+          <Link href="/" className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors">
+            Повернутися на головну
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const filteredRequests = requests.filter(request => 
@@ -182,6 +206,10 @@ export default function AdminPage() {
             <p className="text-purple-200 text-lg">
               Верифікація майстрів та управління платформою
             </p>
+            {/* Debug info */}
+            <div className="mt-4 p-4 bg-black/20 rounded-lg">
+              <p className="text-xs text-white/60">Debug: user={user?.name}, email={user?.email}, isAdmin={isAdmin.toString()}</p>
+            </div>
           </div>
 
           {/* Stats */}
