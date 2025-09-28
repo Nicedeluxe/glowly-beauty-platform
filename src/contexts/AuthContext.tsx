@@ -69,6 +69,15 @@ const MOCK_USERS: (User & { password: string })[] = [
     avatar: '',
     phone: '+380 67 345 67 89',
     birthDate: '1985-12-03'
+  },
+  {
+    id: '4',
+    name: 'Admin',
+    email: 'admin@glowly.com',
+    password: 'admin123',
+    type: 'CLIENT',
+    avatar: '',
+    phone: '+380 67 000 00 00'
   }
 ];
 

@@ -62,6 +62,11 @@ export default function AuthPage() {
     }
   };
 
+  const handleTestLogin = async (email: string, password: string, type: 'CLIENT' | 'MASTER') => {
+    setFormData({ email, password, userType: type });
+    await handleSubmit(new Event('submit') as any);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-pink-600 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
@@ -223,6 +228,37 @@ export default function AuthPage() {
               {isLoading ? 'Завантаження...' : (isLogin ? 'Увійти' : 'Зареєструватися')}
             </button>
           </form>
+
+          {/* Test login buttons */}
+          <div className="mt-6 space-y-3">
+            <div className="text-center">
+              <p className="text-white/60 text-sm mb-3">Тестові аккаунти:</p>
+            </div>
+            
+            <button
+              onClick={() => handleTestLogin('anna@example.com', 'password123', 'CLIENT')}
+              className="w-full py-3 bg-yellow-400 text-purple-900 font-semibold rounded-xl hover:bg-yellow-300 transition-colors flex items-center justify-center space-x-2"
+            >
+              <span>👤</span>
+              <span>Клієнт (Анна)</span>
+            </button>
+            
+            <button
+              onClick={() => handleTestLogin('maria@example.com', 'password123', 'MASTER')}
+              className="w-full py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2"
+            >
+              <span>💄</span>
+              <span>Майстер (Марія)</span>
+            </button>
+            
+            <button
+              onClick={() => handleTestLogin('admin@glowly.com', 'admin123', 'CLIENT')}
+              className="w-full py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
+            >
+              <span>👑</span>
+              <span>Адміністратор</span>
+            </button>
+          </div>
 
           {/* Social login */}
           <div className="mt-6">

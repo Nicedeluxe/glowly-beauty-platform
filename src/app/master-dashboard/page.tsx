@@ -229,6 +229,27 @@ export default function MasterDashboard() {
               </div>
             )}
             
+            {/* Verification Status */}
+            <div className="bg-white/5 rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold text-white mb-1">Статус верифікації</h4>
+                  <p className="text-purple-200 text-sm">Підтвердіть свою кваліфікацію для отримання більше клієнтів</p>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm border border-yellow-500/30">
+                    Не верифікований
+                  </span>
+                  <Link 
+                    href="/verification"
+                    className="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                  >
+                    Подати документи
+                  </Link>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white/80 text-sm font-medium mb-2">
