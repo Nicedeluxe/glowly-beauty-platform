@@ -126,11 +126,11 @@ function SearchContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <Link href="/" className="flex items-center space-x-2">
-              <img 
-                src="/logo.png" 
-                alt="Glowly" 
-                className="w-8 h-8"
-              />
+              <div className="w-6 h-6 bg-[#FF6B6B] rounded-lg flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" viewBox="0 0 100 100" fill="currentColor">
+                  <path d="M50 10L61.8 38.2L90 50L61.8 61.8L50 90L38.2 61.8L10 50L38.2 38.2L50 10Z" />
+                </svg>
+              </div>
               <span className="text-white text-xl font-bold">Glowly</span>
             </Link>
             
@@ -229,7 +229,7 @@ function SearchContent() {
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-purple-600">{master.price}</span>
+                  <span className="text-2xl font-bold text-white">{master.price}</span>
                   <button
                     onClick={() => handleBookAppointment(master)}
                     className="bg-white text-purple-900 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
