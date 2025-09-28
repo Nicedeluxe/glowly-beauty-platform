@@ -78,10 +78,33 @@ export class SearchService {
     
     return masters.filter(master => {
       if (isExactServiceQuery) {
-        // Strict service search - only masters with specific service
-        const hasService = master.services.some(service => 
-          service.toLowerCase().includes(searchTerm)
-        );
+        // Smart service search - find masters with related services
+        const hasService = master.services.some(service => {
+          const serviceLower = service.toLowerCase();
+          
+          // For "брови" - check for any service containing "бров"
+          if (searchTerm === 'брови') {
+            return serviceLower.includes('бров');
+          }
+          
+          // For "вії" - check for any service containing "вій"
+          if (searchTerm === 'вії') {
+            return serviceLower.includes('вій');
+          }
+          
+          // For "манікюр" - check for any service containing "манікюр"
+          if (searchTerm === 'манікюр') {
+            return serviceLower.includes('манікюр');
+          }
+          
+          // For "педикюр" - check for any service containing "педикюр"
+          if (searchTerm === 'педикюр') {
+            return serviceLower.includes('педикюр');
+          }
+          
+          // Default: exact match
+          return serviceLower.includes(searchTerm);
+        });
         
         console.log(`🔍 SearchService: Master "${master.name}" (${master.specialization}) - Services: [${master.services.join(', ')}] - HasService: ${hasService}`);
         
