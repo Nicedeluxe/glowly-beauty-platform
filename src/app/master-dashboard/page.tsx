@@ -463,7 +463,7 @@ export default function MasterDashboard() {
                               onClick={() => addToGoogleCalendar(appointment)}
                               className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors text-sm"
                             >
-                              📅 Календар
+                              ✨ Календар
                             </button>
                             <button
                               onClick={() => cancelAppointment(appointment.id)}

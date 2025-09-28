@@ -698,7 +698,7 @@ function SearchContent() {
             <div className="bg-white/10 rounded-xl p-4 mb-4">
               <div className="flex items-center gap-4 text-white/80 text-sm">
                 <div className="flex items-center gap-2">
-                  <span>📅</span>
+                  <span>✨</span>
                   <span>{new Date(searchDate).toLocaleDateString('uk-UA')}</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -706,7 +706,7 @@ function SearchContent() {
                   <span>{searchTime}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span>📍</span>
+                  <span>🌸</span>
                   <span>Сортовано по відстані</span>
                 </div>
               </div>
@@ -737,21 +737,21 @@ function SearchContent() {
                   <p className="text-white/80 mb-2">{master.specialization}</p>
                   <div className="flex items-center space-x-2 mb-2">
                     <div className="flex items-center">
-                      <span className="text-yellow-400">⭐</span>
+                      <span className="text-yellow-400">💫</span>
                       <span className="text-white ml-1">{master.rating}</span>
                     </div>
                     <span className="text-white/60">•</span>
                     <span className="text-white/80">{master.reviews} відгуків</span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-white/70">
-                    <span>📍 {master.location}</span>
+                    <span>🌸 {master.location}</span>
                     <span>•</span>
-                    <span>⏰ {master.experience}</span>
+                    <span>🦋 {master.experience}</span>
                     {searchDate && searchTime && (
                       <>
                         <span>•</span>
                         <span>
-                          📏 {calculateDistance(userLat, userLng, getMasterCoordinates(master).lat, getMasterCoordinates(master).lng).toFixed(1)} км
+                          ✨ {calculateDistance(userLat, userLng, getMasterCoordinates(master).lat, getMasterCoordinates(master).lng).toFixed(1)} км
                         </span>
                       </>
                     )}
@@ -794,7 +794,7 @@ function SearchContent() {
 
         {filteredMasters.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
+            <div className="text-6xl mb-4">💫</div>
             <h3 className="text-2xl font-semibold text-white mb-2">Нічого не знайдено</h3>
             <p className="text-white/80">Спробуйте інший пошуковий запит</p>
           </div>
@@ -849,7 +849,7 @@ function SearchContent() {
                   <div className="bg-white/10 rounded-xl p-4 mb-4">
                     <div className="flex items-center gap-4 text-white/80 text-sm">
                       <div className="flex items-center gap-2">
-                        <span>📅</span>
+                        <span>✨</span>
                         <span>{new Date(searchDate).toLocaleDateString('uk-UA')}</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -1060,7 +1060,7 @@ function SearchContent() {
 
                 <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-xl p-4">
                   <p className="text-yellow-200 text-sm">
-                    💳 Після підтвердження ви будете перенаправлені на сторінку оплати
+                    ✨ Після підтвердження ви будете перенаправлені на сторінку оплати
                   </p>
                 </div>
               </div>

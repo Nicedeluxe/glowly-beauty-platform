@@ -183,10 +183,10 @@ export default function HomePage() {
         {/* Quick categories */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto mb-8">
           {[
-            { name: 'Манікюр', emoji: '💅' },
-            { name: 'Педикюр', emoji: '🦶' },
-            { name: 'Брови', emoji: '🤨' },
-            { name: 'Вії', emoji: '👁️' }
+            { name: 'Манікюр', emoji: '✨' },
+            { name: 'Педикюр', emoji: '🌸' },
+            { name: 'Брови', emoji: '💫' },
+            { name: 'Вії', emoji: '🦋' }
           ].map((category) => (
             <button
               key={category.name}

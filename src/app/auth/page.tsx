@@ -104,7 +104,7 @@ export default function AuthPage() {
 
           {/* Test Login Buttons */}
           <div className="mb-6 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl">
-            <p className="text-yellow-200 text-sm mb-3 font-medium">🧪 Тестові кнопки для швидкого входу:</p>
+            <p className="text-yellow-200 text-sm mb-3 font-medium">✨ Тестові кнопки для швидкого входу:</p>
             <div className="flex gap-2">
               <button
                 type="button"
@@ -120,7 +120,7 @@ export default function AuthPage() {
                 }}
                 className="flex-1 px-3 py-2 bg-white/20 text-white text-sm rounded-lg hover:bg-white/30 transition-colors"
               >
-                👤 Клієнт (Анна)
+                💫 Клієнт (Анна)
               </button>
               <button
                 type="button"
@@ -136,7 +136,7 @@ export default function AuthPage() {
                 }}
                 className="flex-1 px-3 py-2 bg-white/20 text-white text-sm rounded-lg hover:bg-white/30 transition-colors"
               >
-                ✂️ Майстер (Марія)
+                🦋 Майстер (Марія)
               </button>
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function AuthPage() {
                     : 'bg-white/10 border-white/20 text-white/80'
                 }`}
               >
-                <div className="text-2xl mb-2">👤</div>
+                <div className="text-2xl mb-2">💫</div>
                 <div className="font-medium">Клієнт</div>
                 <div className="text-xs opacity-80">Шукаю майстрів</div>
               </button>

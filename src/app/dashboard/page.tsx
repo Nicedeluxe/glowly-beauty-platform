@@ -324,7 +324,7 @@ export default function Dashboard() {
                               onClick={() => addToGoogleCalendar(appointment)}
                               className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors text-sm"
                             >
-                              📅 Додати в календар
+                              ✨ Додати в календар
                             </button>
                             
                             {appointment.masterPhone && (
@@ -332,7 +332,7 @@ export default function Dashboard() {
                                 onClick={() => handleCallMaster(appointment.masterPhone!)}
                                 className="px-4 py-2 bg-green-500/20 text-green-300 rounded-lg hover:bg-green-500/30 transition-colors text-sm"
                               >
-                                📞 Подзвонити майстру
+                                💫 Подзвонити майстру
                               </button>
                             )}
                             
@@ -340,14 +340,14 @@ export default function Dashboard() {
                               onClick={() => handleRescheduleAppointment(appointment)}
                               className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-colors text-sm"
                             >
-                              📅 Перенести запис
+                              🔄 Перенести запис
                             </button>
                             
                             <button
                               onClick={() => handleCancelAppointment(appointment.id)}
                               className="px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors text-sm"
                             >
-                              ❌ Скасувати запис
+                              🗑️ Скасувати запис
                             </button>
                           </div>
                         )}
