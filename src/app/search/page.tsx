@@ -81,27 +81,31 @@ function SearchContent() {
   };
 
   const handleConfirmBooking = () => {
-    if (selectedMaster && selectedDate && selectedTime) {
-      const booking = {
-        masterId: selectedMaster.id,
-        masterName: selectedMaster.name,
-        masterPhone: selectedMaster.phone,
-        masterSpecialization: selectedMaster.specialization,
-        masterAddress: selectedMaster.address,
-        clientId: user?.id || 'anonymous',
-        clientName: user?.name || 'Anonymous',
-        clientPhone: user?.phone || '',
-        date: selectedDate,
-        time: selectedTime,
-        services: selectedServices,
-        totalPrice: calculateTotalPrice()
-      };
+    if (!selectedMaster || !selectedDate || !selectedTime || selectedServices.length === 0) return;
 
-      addBooking(booking);
-      setShowBookingModal(false);
-      setSelectedMaster(null);
-      setSelectedServices([]);
-    }
+    const totalPrice = calculateTotalPrice();
+    const booking = {
+      masterId: selectedMaster.id,
+      masterName: selectedMaster.name,
+      masterPhone: selectedMaster.phone,
+      masterSpecialization: selectedMaster.specialization,
+      masterAddress: selectedMaster.address,
+      clientId: user?.id || '',
+      clientName: user?.name || '',
+      clientPhone: user?.phone || '',
+      date: selectedDate,
+      time: selectedTime,
+      services: selectedServices,
+      totalPrice,
+      status: 'confirmed' as const,
+      createdAt: new Date().toISOString()
+    };
+
+    addBooking(booking);
+    setShowBookingModal(false);
+    
+    // Redirect to payment page
+    window.location.href = `/payment?bookingId=${booking.id}`;
   };
 
   const handleServiceToggle = (service: string) => {
@@ -269,28 +273,28 @@ function SearchContent() {
 
       {/* Booking Modal */}
       {showBookingModal && selectedMaster && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h2 className="text-lg sm:text-2xl font-bold text-purple-900">Запис до {selectedMaster.name}</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Запис до {selectedMaster.name}</h2>
               <button
                 onClick={() => setShowBookingModal(false)}
-                className="text-purple-400 hover:text-purple-600 text-xl sm:text-2xl"
+                className="text-gray-400 hover:text-gray-600"
               >
-                ×
+                ✕
               </button>
             </div>
 
             {/* Date Selection */}
             {!searchDate && (
-              <div className="mb-4 sm:mb-6">
-                <h3 className="text-base sm:text-lg font-semibold text-purple-900 mb-3 sm:mb-4">Оберіть дату</h3>
-                <div className="grid grid-cols-7 gap-1 sm:gap-2">
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Оберіть дату</h3>
+                <div className="grid grid-cols-7 gap-2">
                   {getCalendarDates().map((date, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedDate(formatDate(date))}
-                      className={`p-1 sm:p-2 text-xs sm:text-sm rounded-lg border ${
+                      className={`p-2 text-sm rounded-lg border ${
                         selectedDate === formatDate(date)
                           ? 'bg-purple-600 text-white border-purple-600'
                           : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
@@ -305,15 +309,15 @@ function SearchContent() {
 
             {/* Time Selection */}
             {!searchTime && (
-              <div className="mb-4 sm:mb-6">
-                <h3 className="text-base sm:text-lg font-semibold text-purple-900 mb-3 sm:mb-4">Оберіть час</h3>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-1 sm:gap-2">
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Оберіть час</h3>
+                <div className="grid grid-cols-4 gap-2">
                   {timeSlots.map((time) => (
                     <button
                       key={time}
                       onClick={() => setSelectedTime(time)}
                       disabled={selectedDate ? isBooked(selectedDate, time) : false}
-                      className={`p-2 sm:p-3 text-xs sm:text-sm rounded-lg border ${
+                      className={`p-3 text-sm rounded-lg border ${
                         selectedTime === time
                           ? 'bg-purple-600 text-white border-purple-600'
                           : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
@@ -327,46 +331,46 @@ function SearchContent() {
             )}
 
             {/* Service Selection */}
-            <div className="mb-4 sm:mb-6">
-              <h3 className="text-base sm:text-lg font-semibold text-purple-900 mb-3 sm:mb-4">Оберіть послуги</h3>
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Оберіть послуги</h3>
               <div className="space-y-2">
                 {selectedMaster.services.map((service, index) => (
-                  <label key={index} className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-50 rounded-lg">
+                  <label key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                     <input
                       type="checkbox"
                       checked={selectedServices.includes(service)}
                       onChange={() => handleServiceToggle(service)}
-                      className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 flex-shrink-0"
+                      className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                     />
-                    <span className="text-gray-700 text-sm sm:text-base">{service}</span>
+                    <span className="text-gray-700">{service}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             {/* Master Info */}
-            <div className="bg-purple-50 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-              <h4 className="font-semibold text-purple-900 mb-2 text-sm sm:text-base">Інформація про майстра</h4>
-              <p className="text-gray-700 text-sm sm:text-base">📍 {selectedMaster.address}</p>
-              <p className="text-gray-700 text-sm sm:text-base">📞 {selectedMaster.phone}</p>
+            <div className="bg-purple-50 rounded-lg p-4 mb-6">
+              <h4 className="font-semibold text-purple-900 mb-2">Інформація про майстра</h4>
+              <p className="text-gray-700">📍 {selectedMaster.address}</p>
+              <p className="text-gray-700">📞 {selectedMaster.phone}</p>
             </div>
 
             {/* Total Price */}
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <span className="text-base sm:text-lg font-semibold text-purple-900">Загальна вартість:</span>
-              <span className="text-xl sm:text-2xl font-bold text-purple-600">{calculateTotalPrice()} грн</span>
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-lg font-semibold text-gray-900">Загальна вартість:</span>
+              <span className="text-2xl font-bold text-purple-600">{calculateTotalPrice()} грн</span>
             </div>
 
             {/* Confirm Button */}
             <button
               onClick={handleConfirmBooking}
               disabled={!selectedDate || !selectedTime || selectedServices.length === 0}
-              className="w-full bg-purple-600 text-white py-2 sm:py-3 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base"
+              className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Підтвердити запис
             </button>
             
-            <p className="text-yellow-200 text-xs sm:text-sm mt-2">✨ После подтверждения вы будете перенаправлены на страницу оплаты</p>
+            <p className="text-yellow-600 text-sm mt-2">✨ После подтверждения вы будете перенаправлены на страницу оплаты</p>
           </div>
         </div>
       )}
